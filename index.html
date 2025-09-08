@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <title>Cat Genetics Checker — Expert + Easy</title>
+<link rel="icon" href="icon.ico" type="image/x-icon">
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
   :root{font-family:system-ui,Segoe UI,Roboto,Arial;--card:rgba(255,255,255,0.95);--muted:#666;}
@@ -44,6 +45,7 @@
   .inline{display:flex;gap:8px;align-items:center}
   .foot{font-size:0.85rem;color:var(--muted);margin-top:6px}
   pre{white-space:pre-wrap;font-size:0.9rem}
+  .hidden{display:none}
 </style>
 </head>
 <body>
@@ -90,6 +92,28 @@
                 <option>Odd Eyes</option>
                 <option>Lilac/Pink (Albino)</option>
               </select>
+            </div>
+
+            <!-- Hidden inputs for Odd Eyes -->
+            <div id="oddEyesInputs" class="grid hidden" style="grid-column: span 2;">
+              <div>
+                <label>Left Eye</label>
+                <select id="leftEye">
+                  <option>Blue</option>
+                  <option>Green</option>
+                  <option>Golden/Yellow</option>
+                  <option>Copper</option>
+                </select>
+              </div>
+              <div>
+                <label>Right Eye</label>
+                <select id="rightEye">
+                  <option>Green</option>
+                  <option>Blue</option>
+                  <option>Golden/Yellow</option>
+                  <option>Copper</option>
+                </select>
+              </div>
             </div>
 
             <div>
@@ -337,6 +361,15 @@ modeSel.addEventListener('change', ()=>{
   resultBox.innerHTML = 'Choose options and press the check button.';
 });
 
+document.getElementById('expertEye').addEventListener('change', function() {
+  const oddEyesInputs = document.getElementById('oddEyesInputs');
+  if (this.value === 'Odd Eyes') {
+    oddEyesInputs.classList.remove('hidden');
+  } else {
+    oddEyesInputs.classList.add('hidden');
+  }
+});
+
 /* show glossary text when selecting relevant dropdowns */
 document.querySelectorAll('select').forEach(sel=>{
   sel.addEventListener('focus', ()=> {
@@ -370,7 +403,7 @@ document.querySelectorAll('select').forEach(sel=>{
 /* Convert expert genotype choices into phenotype descriptors (simplified) */
 function inferPhenotypeFromExpert(opts){
   const out = {warnings:[], notes:[], phenotype:{}};
-  const { sex, redGen, Bgen, Dgen, Dm, Agen, patternGen, tickedGen, Igen, Cgen, Sgen, eye } = opts;
+  const { sex, redGen, Bgen, Dgen, Dm, Agen, patternGen, tickedGen, Igen, Cgen, Sgen, eye, leftEye, rightEye } = opts;
 
   // Sex checks
   if(sex==='M'){
@@ -430,34 +463,32 @@ function inferPhenotypeFromExpert(opts){
   }
 
   // --- EYE COLOR CHECKS ---
-  if (isColorpoint) {
-    if (Cgen === 'cs/cs' && eye !== 'Blue') {
-      out.warnings.push("Genetic mismatch: Siamese-type colorpoints (cs/cs) are genetically restricted to deep blue eyes.");
-    }
-    if (Cgen === 'cb/cb' && !['Golden/Yellow', 'Amber', 'Orange', 'Copper'].includes(eye)) {
-      out.warnings.push("Genetic mismatch: Burmese-type sepia (cb/cb) cats typically have yellow-to-gold eyes, not blue or green.");
-    }
-    if (Cgen === 'cs/cb' && eye !== 'Aqua/Turquoise') {
-      out.warnings.push("Genetic mismatch: Mink (cs/cb) cats are known for their distinctive aqua (blue-green) eye color.");
-    }
+  const isOddEyed = eye === 'Odd Eyes';
+  if (isOddEyed) {
+      if (leftEye === rightEye) {
+          out.warnings.push("For odd eyes, please select two different colors. If the eyes are the same color, choose that color from the main dropdown instead of 'Odd Eyes'.");
+      }
+      if (Sgen === 's/s') {
+          out.warnings.push("Odd eyes (heterochromia) are extremely rare in cats without the Dominant White (W) or high white spotting (S) genes.");
+      }
+  } else {
+      if (isColorpoint) {
+          if (Cgen === 'cs/cs' && eye !== 'Blue') out.warnings.push("Genetic mismatch: Siamese-type colorpoints (cs/cs) are genetically restricted to deep blue eyes.");
+          if (Cgen === 'cb/cb' && !['Golden/Yellow', 'Amber', 'Orange', 'Copper'].includes(eye)) out.warnings.push("Genetic mismatch: Burmese-type sepia (cb/cb) cats typically have yellow-to-gold eyes.");
+          if (Cgen === 'cs/cb' && eye !== 'Aqua/Turquoise') out.warnings.push("Genetic mismatch: Mink (cs/cb) cats are known for their distinctive aqua (blue-green) eye color.");
+      }
+      if (isAlbino && eye !== 'Lilac/Pink (Albino)' && eye !== 'Blue') out.warnings.push("Genetic mismatch: True albino (c/c) cats lack pigment, resulting in pale blue or pinkish/lilac eyes.");
+      if (eye === 'Blue' && Cgen === 'C/C' && !hasWhite && !isAlbino) out.warnings.push("Blue eyes in an adult, non-colorpoint, non-white cat are genetically very rare (e.g., Ojos Azules breed mutation).");
   }
-  if (isAlbino && eye !== 'Lilac/Pink (Albino)' && eye !== 'Blue') {
-    out.warnings.push("Genetic mismatch: True albino (c/c) cats lack pigment, resulting in pale blue or pinkish/lilac eyes.");
-  }
+
   if (Sgen === 'W/--') {
-    out.notes.push("Dominant White (W) is strongly associated with blue or odd eyes, as it prevents pigment cells (melanocytes) from reaching the iris during development.");
+    out.notes.push("Dominant White (W) is strongly associated with blue or odd eyes, as it prevents pigment cells from reaching the iris during development.");
   }
   if (Sgen === 'S/S' && hasWhite) {
-    out.notes.push("High white spotting (S/S) can also lead to blue or odd eyes, especially if white covers the head/ears, for the same reason as Dominant White.");
-  }
-  if (eye === 'Odd Eyes' && Sgen === 's/s') {
-      out.warnings.push("Odd eyes (heterochromia) are extremely rare in cats without the Dominant White (W) or high white spotting (S) genes.");
-  }
-  if (eye === 'Blue' && Cgen === 'C/C' && !hasWhite && !isAlbino) {
-      out.warnings.push("Blue eyes in an adult, non-colorpoint, non-white cat are genetically very rare (e.g., Ojos Azules breed mutation). This is an unlikely combination.");
+    out.notes.push("High white spotting (S/S) can also lead to blue or odd eyes, especially if white covers the head/ears.");
   }
   if(silver && agouti && !['Green', 'Aqua/Turquoise'].includes(eye)) {
-      out.notes.push("Chinchilla/silver tabby cats (Inhibitor + Agouti) typically have their melanin restricted, often resulting in green to turquoise eyes.");
+      out.notes.push("Chinchilla/silver tabby cats (Inhibitor + Agouti) often have green to turquoise eyes.");
   }
 
 
@@ -472,7 +503,7 @@ function inferPhenotypeFromExpert(opts){
     colorpoint: isColorpoint || isAlbino ? 'yes' : 'no',
     white: Sgen,
     red: isRed ? 'red-based' : (isTort?'tortoiseshell':'non-red'),
-    eye: eye
+    eye: isOddEyed ? `Odd Eyes (${leftEye}/${rightEye})` : eye
   };
   
   if(out.warnings.length === 0) {
@@ -495,7 +526,9 @@ document.getElementById('checkBtn').addEventListener('click', ()=>{
     Igen: document.getElementById('Igen').value,
     Cgen: document.getElementById('Cgen').value,
     Sgen: document.getElementById('Sgen').value,
-    eye: document.getElementById('expertEye').value
+    eye: document.getElementById('expertEye').value,
+    leftEye: document.getElementById('leftEye').value,
+    rightEye: document.getElementById('rightEye').value
   };
   const res = inferPhenotypeFromExpert(opts);
   let html = '<div>';
