@@ -1,603 +1,643 @@
+<!doctype html>
 <html>
-   <head>
-      <meta charset="utf-8" />
-      <title>Cat Genetics Checker — Expert + Easy</title>
-      <meta name="viewport" content="width=device-width,initial-scale=1" />
-      <style>
-         :root{font-family:system-ui,Segoe UI,Roboto,Arial;--card:rgba(255,255,255,0.95);--muted:#666;}
-         /* --- CHANGE #1: Background image added to the body --- */
-         body{
-         background-image: url('background.png');
-         background-size: cover;
-         background-repeat: no-repeat;
-         background-attachment: fixed;
-         background-position: center;
-         margin:0;
-         padding:20px;
-         display:flex;
-         justify-content:center;
-         }
-         .wrap{max-width:980px;width:100%}
-         header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-         /* --- Style for the new title image --- /
-         #title-image {
-         height: 50px; / You can adjust this height 
-         width: auto;
-         }*/
-         .modes{display:flex;gap:8px}
-         select, input[type="text"], button{padding:8px;border-radius:6px;border:1px solid #d4dbe8;background:var(--card);font-size:0.95rem}
-         .panel{background:var(--card);padding:14px;border-radius:8px;box-shadow:0 6px 18px rgba(18,38,63,0.06);margin-bottom:12px}
-         .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-         label{display:block;font-size:0.85rem;color:var(--muted);margin-bottom:6px}
-         .result{padding:12px;border-radius:8px;background:var(--card);margin-top:8px;min-height:44px}
-         .info{margin-top:8px;padding:10px;border-left:4px solid #5b7cff;background:#f0f4ff;border-radius:6px;font-size:0.9rem}
-         .small{font-size:0.85rem;color:#3b4958}
-         .warning{color:#7a2b1a; font-weight: bold;}
-         .good{color:#216e2b; font-weight: bold;}
-         .two-col{display:grid;grid-template-columns:1fr 340px;gap:12px}
-         .muted{color:var(--muted);font-size:0.9rem}
-         .inline{display:flex;gap:8px;align-items:center}
-         .foot{font-size:0.85rem;color:var(--muted);margin-top:6px}
-         pre{white-space:pre-wrap;font-size:0.9rem}
-      </style>
-   </head>
-   <body>
-      <div class="wrap">
-         <header>
-            <!-- --- CHANGE #2: Replaced <h1> text with title.png image --- -->
-            <img src="title.png" alt="Cat Genetics Checker" id="title-image">
-            <div class="modes">
-               <label class="small">
-                  Mode
-                  <select id="mode">
-                     <option value="expert">Expert</option>
-                     <option value="easy">Easy</option>
-                  </select>
-               </label>
-            </div>
-         </header>
-         <div class="two-col">
-            <div>
-               <!-- Expert panel -->
-               <div id="expertPanel" class="panel">
-                  <strong>Expert inputs — loci & traits</strong>
-                  <div class="grid" style="margin-top:10px">
-                     <div>
-                        <label>Sex</label>
-                        <select id="sex">
-                           <option value="F">Female</option>
-                           <option value="M">Male</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>Sex-linked red (O locus) — X chromosome genotype</label>
-                        <select id="redGen">
-                           <option value="XO/XO">XO / XO (female: homo red)</option>
-                           <option value="XO/Xo">XO / Xo (female: tortoiseshell)</option>
-                           <option value="Xo/Xo">Xo / Xo (female: non-red)</option>
-                           <option value="XO/Y">XO / Y (male red)</option>
-                           <option value="Xo/Y">Xo / Y (male non-red)</option>
-                           <option value="XXY">XXY (possible tortie male — Klinefelter example)</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>B locus (B / b / bl) — eumelanin</label>
-                        <select id="Bgen">
-                           <option value="B/B">B / B (black)</option>
-                           <option value="B/b">B / b (carrier chocolate)</option>
-                           <option value="B/bl">B / bl (carrier cinnamon)</option>
-                           <option value="b/b">b / b (chocolate)</option>
-                           <option value="b/bl">b / bl (choc carrier cinnamon)</option>
-                           <option value="bl/bl">bl / bl (cinnamon)</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>D locus (D / d) — dilution</label>
-                        <select id="Dgen">
-                           <option value="D/D">D / D (full color)</option>
-                           <option value="D/d">D / d (carrier dilute)</option>
-                           <option value="d/d">d / d (diluted)</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>Dilute modifier (Dm) — warms dilute to caramel/apricot</label>
-                        <select id="Dm">
-                           <option value="dm/dm">no modifier</option>
-                           <option value="Dm/dm">Dm carrier</option>
-                           <option value="Dm/Dm">Dm present</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>A locus (Agouti) — A vs a (nonagouti)</label>
-                        <select id="Agen">
-                           <option value="A/A">A / A (agouti — allows tabby)</option>
-                           <option value="A/a">A / a (agouti carrier nonagouti)</option>
-                           <option value="a/a">a / a (nonagouti — solid)</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>Tabby pattern (Mackerel/Classic/Spotted)</label>
-                        <select id="patternGen">
-                           <option value="Mc/Mc">Mc / Mc (mackerel tendency)</option>
-                           <option value="Mc/mc">Mc / mc (mackerel carrier)</option>
-                           <option value="mc/mc">mc / mc (classic background)</option>
-                           <option value="Sp/Sp">Sp / Sp (spotted tendency)</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>Ticked Tabby (Ta locus)</label>
-                        <select id="tickedGen">
-                           <option value="ta/ta">ta / ta (not ticked)</option>
-                           <option value="Ta/ta">Ta / ta (ticked carrier)</option>
-                           <option value="Ta/Ta">Ta / Ta (ticked)</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>I locus (Inhibitor) — silver / smoke</label>
-                        <select id="Igen">
-                           <option value="i/i">i / i (non-silver)</option>
-                           <option value="I/i">I / i (silver carrier)</option>
-                           <option value="I/I">I / I (silver)</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>Colorpoint (C locus)</label>
-                        <select id="Cgen">
-                           <option value="C/C">C / C (full pigment — no point)</option>
-                           <option value="C/cs">C / cs (point carrier)</option>
-                           <option value="cs/cs">cs / cs (colorpoint — Siamese type)</option>
-                           <option value="cb/cb">cb / cb (Burmese sepia)</option>
-                           <option value="cs/cb">cs / cb (mink)</option>
-                           <option value="c/c">c / c (full albino)</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>S / W — white spotting & dominant white</label>
-                        <select id="Sgen">
-                           <option value="s/s">s / s (no white spotting)</option>
-                           <option value="S/s">S / s (low/medium white)</option>
-                           <option value="S/S">S / S (high white / van possible)</option>
-                           <option value="W/--">W / - (dominant white)</option>
-                        </select>
-                     </div>
-                  </div>
-                  <div class="foot">
-                     <div class="inline"><button id="checkBtn">Check single-cat plausibility</button>
-                        <button id="offspringBtn">Open offspring calculator (short)</button>
-                     </div>
-                     <div class="muted" style="margin-top:8px">Tip: change Sex then pick red genotype; the checker will flag biologically inconsistent picks (e.g. a male with XO/XO unless XXY selected).</div>
-                  </div>
-               </div>
-               <!-- Easy panel -->
-               <div id="easyPanel" class="panel" style="display:none">
-                  <strong>Easy inputs — owner terms</strong>
-                  <div style="margin-top:10px" class="grid">
-                     <div>
-                        <label>Sex</label>
-                        <select id="easySex">
-                           <option value="F">Female</option>
-                           <option value="M">Male</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>Fur length</label>
-                        <select id="easyFur">
-                           <option>Short</option>
-                           <option>Long</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>Fur color</label>
-                        <select id="easyColor">
-                           <option>Black</option>
-                           <option>Blue/Gray</option>
-                           <option>Chocolate</option>
-                           <option>Cinnamon</option>
-                           <option>Red/Orange</option>
-                           <option>Cream</option>
-                           <option>Lilac</option>
-                           <option>Fawn</option>
-                           <option>White</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>Pattern</label>
-                        <select id="easyPattern">
-                           <option>Solid</option>
-                           <option>Tabby</option>
-                           <option>Spotted</option>
-                           <option>Ticked</option>
-                           <option>Tortoiseshell</option>
-                           <option>Bicolor</option>
-                           <option>Colorpoint</option>
-                        </select>
-                     </div>
-                     <div>
-                        <label>Eye color</label>
-                        <select id="easyEye">
-                           <option>Amber</option>
-                           <option>Green</option>
-                           <option>Blue</option>
-                        </select>
-                     </div>
-                  </div>
-                  <div style="margin-top:10px" class="foot small muted">Easy mode maps to alleles behind the scenes and runs the same plausibility rules.</div>
-                  <button id="checkEasyBtn">Check Combination</button>
-               </div>
-               <div class="panel">
-                  <strong>Result</strong>
-                  <div id="result" class="result">Choose options and press the check button.</div>
-               </div>
-            </div>
-            <!-- Right column: glossary/info + offspring tool -->
-            <div>
-               <div class="panel">
-                  <strong>Trait info / glossary</strong>
-                  <div id="info" class="info">Select any dropdown to see glossary text for that trait. The tool uses these rules: sex-linked red is X-linked; B locus has B/b/bl; D is recessive; I = inhibitor (silver); A = agouti; cs/cb = colorpoint/sepia; S/W white.</div>
-               </div>
-               <div id="offspringPanel" class="panel" style="display:none">
-                  <strong>Offspring calculator (demo)</strong>
-                  <div class="small muted">This mini tool focuses on sex-linked red (X-linked) and B locus example — expandable to other loci.</div>
-                  <div style="margin-top:8px">
-                     <label>Dam red genotype (choose an X genotype)</label>
-                     <select id="damX">
-                        <option value="XO/XO">XO/XO (red female)</option>
-                        <option value="XO/Xo">XO/Xo (tortie female)</option>
-                        <option value="Xo/Xo">Xo/Xo (non-red female)</option>
-                     </select>
-                     <label style="margin-top:8px">Sire red genotype</label>
-                     <select id="sireX">
-                        <option value="XO/Y">XO/Y (red male)</option>
-                        <option value="Xo/Y">Xo/Y (non-red male)</option>
-                     </select>
-                     <hr style="margin:8px 0">
-                     <div><button id="calcOff">Compute offspring probabilities (red / tortie / black-based)</button></div>
-                     <div id="offspringResult" class="result" style="margin-top:8px">—</div>
-                  </div>
-               </div>
-               <div class="panel">
-                  <strong>Quick reference (rules used)</strong>
-                  <ul class="muted small">
-                     <li><b>Sex-linked red (O)</b> is X-linked: females have two X genotypes (XO/Xo etc.); males are XO/Y or Xo/Y. Tortoiseshell normally only females. Rare tortie males generally XXY (Klinefelter) or chimera.</li>
-                     <li><b>B locus</b> has B (black) > b (chocolate) > bl (cinnamon). Two black parents can produce chocolate OR cinnamon only if carriers match.</li>
-                     <li><b>D locus</b> (dilution) is recessive: d/d produces dilute colors (black→blue, chocolate→lilac, cinnamon→fawn, red→cream).</li>
-                     <li><b>I (inhibitor)</b> causes silver/smoke: acts on agouti/nonagouti to create smoke or silver tabby.</li>
-                     <li><b>Colorpoint</b> (cs/cb) — temperature sensitive albinism: colorpoint cats have pale bodies & blue eyes.</li>
-                     <li><b>S / W</b> white spotting and dominant white interact with eye color (dominant white often produces blue or odd eyes).</li>
-                  </ul>
-               </div>
-            </div>
-         </div>
+<head>
+<meta charset="utf-8" />
+<title>Cat Genetics Checker — Expert + Easy</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root{font-family:system-ui,Segoe UI,Roboto,Arial;--card:rgba(255,255,255,0.95);--muted:#666;}
+  
+  /* --- CHANGE #1: Background image added to the body --- */
+  body{
+    background-image: url('background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    margin:0;
+    padding:20px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .wrap{max-width:980px;width:100%}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+  
+  /* --- Style for the new title image --- */
+  #title-image {
+    height: 50px; /* You can adjust this height */
+    width: auto;
+  }
+  
+  .modes{display:flex;gap:8px}
+  select, input[type="text"], button{padding:8px;border-radius:6px;border:1px solid #d4dbe8;background:var(--card);font-size:0.95rem}
+  .panel{background:var(--card);padding:14px;border-radius:8px;box-shadow:0 6px 18px rgba(18,38,63,0.06);margin-bottom:12px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  label{display:block;font-size:0.85rem;color:var(--muted);margin-bottom:6px}
+  .result{padding:12px;border-radius:8px;background:var(--card);margin-top:8px;min-height:44px}
+  .info{margin-top:8px;padding:10px;border-left:4px solid #5b7cff;background:#f0f4ff;border-radius:6px;font-size:0.9rem}
+  .small{font-size:0.85rem;color:#3b4958}
+  .warning{color:#7a2b1a; font-weight: bold;}
+  .good{color:#216e2b; font-weight: bold;}
+  .two-col{display:grid;grid-template-columns:1fr 340px;gap:12px}
+  .muted{color:var(--muted);font-size:0.9rem}
+  .inline{display:flex;gap:8px;align-items:center}
+  .foot{font-size:0.85rem;color:var(--muted);margin-top:6px}
+  pre{white-space:pre-wrap;font-size:0.9rem}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <!-- --- CHANGE #2: Replaced <h1> text with title.png image --- -->
+      <img src="title.png" alt="Cat Genetics Checker" id="title-image">
+      
+      <div class="modes">
+        <label class="small">Mode
+          <select id="mode">
+            <option value="expert">Expert</option>
+            <option value="easy">Easy</option>
+          </select>
+        </label>
       </div>
-      <script>
-         /* --- Glossary snippets (use longer text if you want) --- */
-         const G = {
-         "XO/XO":"Female homozygous red — both X chromosomes carry the red allele. Phenotype: red-based.",
-         "XO/Xo":"Female heterozygous red (tortoiseshell possible) — one X red, one X non-red. Patches of red + non-red.",
-         "Xo/Xo":"Female non-red — no O allele present.",
-         "XO/Y":"Male red — male with red allele on X (red-based male).",
-         "Xo/Y":"Male non-red (no red allele).",
-         "XXY":"Male with two Xs + Y (possible tortoiseshell male via Klinefelter).",
-         "B locus":"B = black (dominant); b = chocolate (recessive to B); bl = cinnamon (recessive to B & b). Chocolate and cinnamon are eumelanin modifications.",
-         "D locus":"D = full color (dominant); d = dilute (recessive). d/d makes dilute colors: black→blue, chocolate→lilac, cinnamon→fawn, red→cream.",
-         "Dm":"Dilute modifier: dominant warm modifier acting on dilute phenotypes to create caramel/apricot variants.",
-         "A locus":"A (agouti) permits tabby (banded hair). a (nonagouti) suppresses banding → solid (or ghost markings).",
-         "Mc/Sp/Ta":"Tabby pattern modifiers: Mc (mackerel), Sp (spotted), Ta (ticked) + polygenic modifiers produce pattern varieties. Ticked (Ta) is a separate locus from Mackerel/Classic.",
-         "c/c": "Full albino (c/c) results in a completely white coat and blue eyes due to a lack of pigment.[[1](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQH3uWK8RrxUwB6lNHq5VABQu7fWau8CDCpL38FZAjwy5Il2qeiItWPvT03LSRdyUi4h6byMy64dzQw2289lPREPCTDOF7gliwl1rUBxuSPllw92QpTls4-DdS8r9CAhtOp3K_KZLHyzaEtstXWXDx5Nexksg1aCpCz_ubmthQy421V_)][[2](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHCfBy94z-dhrQWJbU9IeAGmx8n_2h8uo-Oqi0vl3h79Ot6PI06wSMpGyyy5-CYBwtSVn6mQliynDYLHPrt4YB1LDSuoFoZjMp3S5wIjgsMqsG3cLJFVDQp-owBD5LiD_hE0NBKpjOkz5g%3D)]",
-         "I locus":"Inhibitor (I) causes silver / smoke series: prevents pigment in the hair root giving silvered backgrounds or smoke effect.",
-         "C locus":"Colorpoint alleles (cs, cb) are temperature-sensitive forms of tyrosinase producing point patterns and typically blue eyes.",
-         "S/W":"S locus = white spotting (range low→high). W = dominant white (complete white); W often associated with blue/odd eyes."
-         };
-         
-         /* basic UI wiring */
-         const modeSel = document.getElementById('mode');
-         const expertPanel = document.getElementById('expertPanel');
-         const easyPanel = document.getElementById('easyPanel');
-         const info = document.getElementById('info');
-         const resultBox = document.getElementById('result');
-         const offspringPanel = document.getElementById('offspringPanel');
-         
-         modeSel.addEventListener('change', ()=>{
-         if(modeSel.value==='expert'){
-         expertPanel.style.display='block';
-         easyPanel.style.display='none';
-         } else {
-         expertPanel.style.display='none';
-         easyPanel.style.display='block';
-         }
-         resultBox.innerHTML = 'Choose options and press the check button.';
-         });
-         
-         /* show glossary text when selecting relevant dropdowns */
-         document.querySelectorAll('select').forEach(sel=>{
-         sel.addEventListener('focus', ()=> {
-         const key = sel.value;
-         if(G[key]) info.innerHTML = `<strong>${sel.previousElementSibling?.innerText || sel.getAttribute('id')}</strong><div style="margin-top:6px">${G[key]}</div>`;
-         else {
-         // try mapping some selects to keys
-         const id = sel.id;
-         if(id==='Bgen') info.innerHTML = `<strong>B locus</strong><div style="margin-top:6px">${G['B locus']}</div>`;
-         else if(id==='Dgen') info.innerHTML = `<strong>D locus</strong><div style="margin-top:6px">${G['D locus']}</div>`;
-         else if(id==='Agen') info.innerHTML = `<strong>A locus</strong><div style="margin-top:6px">${G['A locus']}</div>`;
-         else if(id==='Igen') info.innerHTML = `<strong>I locus</strong><div style="margin-top:6px">${G['I locus']}</div>`;
-         else if(id==='Cgen') info.innerHTML = `<strong>C locus</strong><div style="margin-top:6px">${G['C locus']}</div>`;
-         else if(id==='Sgen') info.innerHTML = `<strong>S / W</strong><div style="margin-top:6px">${G['S/W']}</div>`;
-         else info.innerHTML = 'Select an option to see glossary text for that trait.';
-         }
-         });
-         });
-         
-         /* Convert expert genotype choices into phenotype descriptors (simplified) */
-         function inferPhenotypeFromExpert(opts){
-         const out = {warnings:[], notes:[], phenotype:{}};
-         const red = opts.redGen;
-         const sex = opts.sex;
-         if(sex==='M'){
-         if(red.includes('/') && !red.endsWith('/Y') && red !== 'XXY'){
-         out.warnings.push('Selected a 2-X genotype for a male — biologically a male should be XO/Y (or XXY for tortie males).');
-         }
-         if(red==='XO/XO' && sex==='M') out.warnings.push('Male with XO/XO is impossible (unless you meant XXY).');
-         } else {
-         if(red.endsWith('/Y')) out.warnings.push('Selected an XO/Y genotype for a female — that is a male genotype.');
-         }
-         let isRed=false, isNonRed=false, isTort=false;
-         if(red==='XO/XO' || red==='XO/Y' ) isRed=true;
-         if(red==='Xo/Xo' || red==='Xo/Y') isNonRed=true;
-         if(red==='XO/Xo' || red==='XXY') isTort=true;
-         const B = opts.Bgen;
-         let baseB = 'black';
-         if(B==='b/b') baseB='chocolate';
-         if(B==='bl/bl') baseB='cinnamon';
-         if(B==='B/b' || B==='B/bl' || B==='b/bl') baseB='black (carrier mixture)';
-         const D = opts.Dgen;
-         let diluted = (D==='d/d');
-         const Dm = opts.Dm;
-         let dm = (Dm !== 'dm/dm');
-         function colorByBandD(base){
-         if(!diluted) {
-         if(base==='black') return 'black';
-         if(base==='chocolate') return 'chocolate';
-         if(base==='cinnamon') return 'cinnamon';
-         return base;
-         } else {
-         if(base==='black') return dm ? 'caramel (warm dilute of black)' : 'blue (dilute black)';
-         if(base==='chocolate') return dm ? 'caramel/lilac-ish (dilute modifier warms lilac)' : 'lilac';
-         if(base==='cinnamon') return dm ? 'apricot' : 'fawn';
-         return base;
-         }
-         }
-         const visibleBaseColor = colorByBandD(baseB);
-         const A = opts.Agen;
-         const agouti = (A!=='a/a');
-         const patternGen = opts.patternGen;
-         const tickedGen = opts.tickedGen;
-         let pattern = agouti ? 'tabby possible' : 'solid (nonagouti)';
-         if(agouti){
-         if(tickedGen !== 'ta/ta') {
-         pattern = 'ticked / agouti-type';
-         } else if(patternGen.startsWith('Sp')) {
-         pattern = 'spotted/tabby';
-         } else if(patternGen.startsWith('mc') || patternGen.startsWith('Mc')) {
-         pattern = 'mackerel/tabby tendency';
-         } else {
-         pattern = 'tabby (pattern depends on modifiers)';
-         }
-         }
-         const I = opts.Igen;
-         let silver = (I!=='i/i');
-         if(silver) {
-         if(agouti) out.notes.push('Inhibitor (I) acting with agouti produces silver tabby variants.');
-         else out.notes.push('Inhibitor (I) acting on nonagouti can produce smoke (silvery undercoat).');
-         }
-         const C = opts.Cgen;
-         const colorpoint = (C==='cs/cs' || C==='cs/cb' || C==='C/cs' || C==='cb/cb' || C ==='c/c');
-         if(colorpoint){
-         if (C === 'c/c') {
-         out.notes.push('Full albino (c/c) results in a completely white coat and blue eyes due to a lack of pigment.[[1](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQH3uWK8RrxUwB6lNHq5VABQu7fWau8CDCpL38FZAjwy5Il2qeiItWPvT03LSRdyUi4h6byMy64dzQw2289lPREPCTDOF7gliwl1rUBxuSPllw92QpTls4-DdS8r9CAhtOp3K_KZLHyzaEtstXWXDx5Nexksg1aCpCz_ubmthQy421V_)][[2](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQHCfBy94z-dhrQWJbU9IeAGmx8n_2h8uo-Oqi0vl3h79Ot6PI06wSMpGyyy5-CYBwtSVn6mQliynDYLHPrt4YB1LDSuoFoZjMp3S5wIjgsMqsG3cLJFVDQp-owBD5LiD_hE0NBKpjOkz5g%3D)]');
-         } else {
-         out.notes.push('Colorpoint alleles imply temperature-sensitive expression (paler body, darker extremities) and typically blue eyes.');
-         }
-         }
-         const S = opts.Sgen;
-         if(S==='W/--') out.notes.push('Dominant W chosen: cat will be all white; watch for blue/odd eyes prevalence.');
-         if(S==='S/S') out.notes.push('High white spotting: large white areas (van/harlequin/bicolor possible).');
-         if(isRed){
-         if(!agouti){
-         out.notes.push('Sex-linked red (O) prevents eumelanin production — red often shows low-contrast markings; a "true" solid red is not genetically possible (red cats are genetically tabby even if markings are faint).');
-         } else {
-         out.notes.push('Red overrides black-based appearance: the base B locus is not visibly eumelanic when full red is present.');
-         }
-         }
-         if(opts.sex==='M' && isTort && opts.redGen !== 'XXY') {
-         out.warnings.push('Male tortoiseshell phenotype is extremely unlikely unless XXY (Klinefelter) or chimera. Consider selecting XXY if you meant a tortie male.');
-         }
-         if(isRed && (B==='b/b' || B==='bl/bl' || B==='b/bl')) {
-         out.notes.push('Though red masks eumelanin, if tortie combination exists you can have chocolate- or cinnamon-based tortoiseshell variants.');
-         }
-         if(colorpoint && S==='W/--'){
-         out.notes.push('Colorpoint + Dominant white: white will mask the body but point alleles may still produce point coloration in unmasked areas (e.g. points showing on a white cat).');
-         }
-         let eyeNotes = [];
-         if(colorpoint) eyeNotes.push('blue eyes expected (colorpoint).');
-         if(S==='W/--') eyeNotes.push('dominant white often produces blue or odd eyes.');
-         if(eyeNotes.length) out.notes.push('Eyes: ' + eyeNotes.join(' '));
-         out.phenotype = {
-         visibleBase: visibleBaseColor,
-         pattern: pattern,
-         silver: silver ? 'yes' : 'no',
-         colorpoint: colorpoint ? 'yes' : 'no',
-         white: S,
-         red: isRed ? 'red-based' : (isTort?'tortoiseshell (patchwork)':'non-red')
-         };
-         if(isRed && !agouti){
-         out.warnings.push('Solid red (true non-tabby red) is not genetically possible — red results from phaeomelanin and shows tabby patterning even when faint.');
-         }
-         if(out.warnings.length===0 && out.notes.length > 0) out.warnings.push('No fatal genetic contradictions found — combination looks plausible (given simplified model).');
-         else if(out.warnings.length === 0 && out.notes.length === 0) out.warnings.push('Plausible combination.');
-         return out;
-         }
-         
-         document.getElementById('checkBtn').addEventListener('click', ()=>{
-         const opts = {
-         sex: document.getElementById('sex').value,
-         redGen: document.getElementById('redGen').value,
-         Bgen: document.getElementById('Bgen').value,
-         Dgen: document.getElementById('Dgen').value,
-         Dm: document.getElementById('Dm').value,
-         Agen: document.getElementById('Agen').value,
-         patternGen: document.getElementById('patternGen').value,
-         tickedGen: document.getElementById('tickedGen').value,
-         Igen: document.getElementById('Igen').value,
-         Cgen: document.getElementById('Cgen').value,
-         Sgen: document.getElementById('Sgen').value
-         };
-         const res = inferPhenotypeFromExpert(opts);
-         let html = '<div>';
-         html += `<div class="small"><strong>Inferred phenotype</strong></div>`;
-         html += `<div class="muted small" style="margin-top:6px">Base color (B/D/Dm): <strong>${res.phenotype.visibleBase}</strong> — pattern: <strong>${res.phenotype.pattern}</strong> — silver: <strong>${res.phenotype.silver}</strong></div>`;
-         if(res.notes.length){
-         html += '<div style="margin-top:10px"><strong>Notes</strong><ul>';
-         res.notes.forEach(n=> html += `<li class="small">${n}</li>`);
-         html += '</ul></div>';
-         }
-         html += '<div style="margin-top:8px"><strong>Plausibility Checks</strong><ul>';
-         res.warnings.forEach(w=> html += `<li class="warning small">${w}</li>`);
-         html += '</ul></div></div>';
-         resultBox.innerHTML = html;
-         });
-         
-         document.getElementById('offspringBtn').addEventListener('click', ()=>{
-         offspringPanel.style.display = offspringPanel.style.display==='none' ? 'block' : 'none';
-         });
-         
-         function parseXgeno(x){
-         if(x==='XXY') return ['XO','Xo','Y'];
-         return x.split('/');
-         }
-         function calcOffspringFromX(dam, sire){
-         const damAlleles = parseXgeno(dam);
-         const sireAlleles = parseXgeno(sire);
-         const offspring = {};
-         const damXs = damAlleles.filter(a=>a.startsWith('XO') || a.startsWith('Xo'));
-         const sireGam = sireAlleles;
-         const total = damXs.length * sireGam.length;
-         damXs.forEach(dax => {
-         sireGam.forEach(sig => {
-         const kid = (sig==='Y') ? `${dax}/Y` : `${dax}/${sig}`;
-         const containsXO = kid.includes('XO');
-         let phenotype='non-red';
-         if(kid.includes('/Y')){
-         phenotype = containsXO ? 'red male' : 'non-red male';
-         } else {
-         if(kid === 'XO/Xo' || kid === 'Xo/XO') phenotype = 'tortoiseshell female';
-         else phenotype = containsXO ? 'red female' : 'non-red female';
-         }
-         offspring[phenotype] = (offspring[phenotype]||0) + 1;
-         });
-         });
-         const out = {};
-         for(const k in offspring) out[k] = Math.round(100 * offspring[k] / total);
-         return out;
-         }
-         
-         function progenyB(b1, b2){
-         function gametes(gen){
-         const [a,b] = gen.split('/');
-         return [a, b];
-         }
-         const g1 = gametes(b1), g2 = gametes(b2);
-         const combos = {};
-         g1.forEach(a=> g2.forEach(b=>{
-         const sorted = [a,b].sort().join('/');
-         combos[sorted] = (combos[sorted]||0)+1;
-         }));
-         function phenoFromGen(gen){
-         const alleles = gen.split('/');
-         if(alleles.includes('B')) return 'black-based';
-         if(alleles.includes('b') && !alleles.includes('B')) {
-         if(alleles.includes('bl')) return 'chocolate carrier cinnamon';
-         return 'chocolate-based';
-         }
-         if(alleles.includes('bl') && !alleles.includes('B') && !alleles.includes('b')) return 'cinnamon-based';
-         return 'unknown';
-         }
-         const total = Object.values(combos).reduce((s,x)=>s+x,0);
-         const out = {};
-         for(const g in combos){
-         const p = phenoFromGen(g);
-         out[p] = (out[p]||0) + combos[g];
-         }
-         for(const k in out) out[k] = Math.round(100 * out[k] / total);
-         return out;
-         }
-         
-         document.getElementById('calcOff').addEventListener('click', ()=>{
-         const dam = document.getElementById('damX').value;
-         const sire = document.getElementById('sireX').value;
-         const res = calcOffspringFromX(dam,sire);
-         const Bdam = document.getElementById('Bgen').value;
-         const Bsire = (document.getElementById('Bgen') ? document.getElementById('Bgen').value : 'B/B');
-         const bres = progenyB(Bdam, Bsire);
-         let out = '<div><strong>Sex-linked red offspring probabilities (approx)</strong>';
-         out += '<div class="muted small" style="margin-top:6px">';
-         for(const k in res) out += `<div>${k}: <strong>${res[k]}%</strong></div>`;
-         out += '</div>';
-         out += '<hr><strong>B-locus (example) — parental genotypes used:</strong><div class="muted small">Dam: '+Bdam+' — Sire: '+Bsire+'</div>';
-         out += '<div style="margin-top:6px" class="muted small">';
-         for(const k in bres) out += `<div>${k}: <strong>${bres[k]}%</strong></div>`;
-         out += '</div></div>';
-         document.getElementById('offspringResult').innerHTML = out;
-         });
-         
-         document.getElementById("checkEasyBtn").addEventListener("click", () => {
-         const warnings = [];
-         const notes = [];
-         const sex = document.getElementById("easySex").value;
-         const eye = document.getElementById("easyEye").value;
-         const fur = document.getElementById("easyColor").value;
-         const pattern = document.getElementById("easyPattern").value;
-         const resultContainer = document.getElementById("result");
-         
-         if (pattern === "Tortoiseshell" && sex === "M") {
-         warnings.push("Male tortoiseshell cats are genetically very rare. This usually requires a chromosomal abnormality (like XXY) and they are typically sterile.");
-         }
-         if (pattern === "Tortoiseshell" && (fur === "Red/Orange" || fur === "Cream")) {
-         warnings.push("For a tortoiseshell pattern, please select the cat's non-red color (e.g., Black, Blue, Chocolate). The red/cream patches are dictated by the tortoiseshell genetics itself, not the base color choice.");
-         }
-         if ((fur === "Red/Orange" || fur === "Cream") && pattern === "Solid") {
-         warnings.push("A true 'solid' red or cream cat is not genetically possible. These cats are always a form of tabby, although the markings can be very faint (low contrast).");
-         }
-         if (eye === "Blue" && pattern !== "Colorpoint" && pattern !== "Bicolor" && fur !== "White") {
-         notes.push("Blue eyes are uncommon without the colorpoint pattern, a high degree of white spotting (found in some bicolors), or in dominant white cats. While not impossible, it's less common.");
-         }
-         if (pattern === "Colorpoint") {
-         notes.push("For colorpoint cats, eye color often varies: 'seal' points typically have blue eyes, 'mink' points often have aqua/green eyes, and 'sepia' points may have green or yellow eyes.[[3](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQF2HZXIeFvYQVQ5CqJ_A2HQnoPNJgbJXdL9AJGWu17hUZjJYcYAvtVYRhC9gKzmjZ2vSVbcMf5lCovbsVWSNo9-piazWnqDwKkpUROo7636bHJQ37oLBJ63l9OvxTIRAp0yLW-wJ_KltXZ8)][[4](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQFKVFU9j-N3rks6JBzpbU4OjUUGASjlrCUfNjJuouR5566i08jiEIYunQgvQTA6cqwiy36UbSccYh7d3mMizHhHGyixYBMa_4FosjjZms-u5PBMwYEBK0YbFSiPtT-mvPMah2wnAC03GI9OutEgazwyZAdsC05INcs64ZsrMvVyqXWVaAtGJDrGfu6wURMsaw%3D%3D)]");
-         }
-         if (fur === "White" && eye !== "Blue") {
-         notes.push("Dominant white cats often have blue or odd-colored eyes (one blue, one green/amber).");
-         }
-         
-         let html = '<div><strong>Easy Mode Plausibility Check</strong>';
-         if (warnings.length > 0) {
-         html += '<div style="margin-top:10px"><strong>Warnings / Genetic Rarities</strong><ul>';
-         warnings.forEach(w => {
-         html += `<li class="warning small">${w}</li>`;
-         });
-         html += '</ul></div>';
-         }
-         if (notes.length > 0) {
-         html += '<div style="margin-top:10px"><strong>Notes</strong><ul>';
-         notes.forEach(n => {
-         html += `<li class="small">${n}</li>`;
-         });
-         html += '</ul></div>';
-         }
-         if (warnings.length === 0) {
-         html += '<div class="good" style="margin-top:8px">✅ This combination appears genetically plausible based on the inputs.</div>';
-         }
-         html += '</div>';
-         resultContainer.innerHTML = html;
-         });
-      </script>
-   </body>
+    </header>
+
+    <div class="two-col">
+      <div>
+        <!-- Expert panel -->
+        <div id="expertPanel" class="panel">
+          <strong>Expert inputs — loci & traits</strong>
+          <div class="grid" style="margin-top:10px">
+            <div>
+              <label>Sex</label>
+              <select id="sex">
+                <option value="F">Female</option>
+                <option value="M">Male</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Eye Color</label>
+              <select id="expertEye">
+                <option>Blue</option>
+                <option>Aqua/Turquoise</option>
+                <option>Green</option>
+                <option>Hazel</option>
+                <option>Golden/Yellow</option>
+                <option>Amber</option>
+                <option>Orange</option>
+                <option>Copper</option>
+                <option>Odd Eyes</option>
+                <option>Lilac/Pink (Albino)</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Sex-linked red (O locus) — X chromosome genotype</label>
+              <select id="redGen">
+                <option value="XO/XO">XO / XO (female: homo red)</option>
+                <option value="XO/Xo">XO / Xo (female: tortoiseshell)</option>
+                <option value="Xo/Xo">Xo / Xo (female: non-red)</option>
+                <option value="XO/Y">XO / Y (male red)</option>
+                <option value="Xo/Y">Xo / Y (male non-red)</option>
+                <option value="XXY">XXY (possible tortie male — Klinefelter example)</option>
+              </select>
+            </div>
+
+            <div>
+              <label>B locus (B / b / bl) — eumelanin</label>
+              <select id="Bgen">
+                <option value="B/B">B / B (black)</option>
+                <option value="B/b">B / b (carrier chocolate)</option>
+                <option value="B/bl">B / bl (carrier cinnamon)</option>
+                <option value="b/b">b / b (chocolate)</option>
+                <option value="b/bl">b / bl (choc carrier cinnamon)</option>
+                <option value="bl/bl">bl / bl (cinnamon)</option>
+              </select>
+            </div>
+
+            <div>
+              <label>D locus (D / d) — dilution</label>
+              <select id="Dgen">
+                <option value="D/D">D / D (full color)</option>
+                <option value="D/d">D / d (carrier dilute)</option>
+                <option value="d/d">d / d (diluted)</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Dilute modifier (Dm) — warms dilute to caramel/apricot</label>
+              <select id="Dm">
+                <option value="dm/dm">no modifier</option>
+                <option value="Dm/dm">Dm carrier</option>
+                <option value="Dm/Dm">Dm present</option>
+              </select>
+            </div>
+
+            <div>
+              <label>A locus (Agouti) — A vs a (nonagouti)</label>
+              <select id="Agen">
+                <option value="A/A">A / A (agouti — allows tabby)</option>
+                <option value="A/a">A / a (agouti carrier nonagouti)</option>
+                <option value="a/a">a / a (nonagouti — solid)</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Tabby pattern (Mackerel/Classic/Spotted)</label>
+              <select id="patternGen">
+                <option value="Mc/Mc">Mc / Mc (mackerel tendency)</option>
+                <option value="Mc/mc">Mc / mc (mackerel carrier)</option>
+                <option value="mc/mc">mc / mc (classic background)</option>
+                <option value="Sp/Sp">Sp / Sp (spotted tendency)</option>
+              </select>
+            </div>
+
+             <div>
+               <label>Ticked Tabby (Ta locus)</label>
+               <select id="tickedGen">
+                 <option value="ta/ta">ta / ta (not ticked)</option>
+                 <option value="Ta/ta">Ta / ta (ticked carrier)</option>
+                 <option value="Ta/Ta">Ta / Ta (ticked)</option>
+               </select>
+             </div>
+
+            <div>
+              <label>I locus (Inhibitor) — silver / smoke</label>
+              <select id="Igen">
+                <option value="i/i">i / i (non-silver)</option>
+                <option value="I/i">I / i (silver carrier)</option>
+                <option value="I/I">I / I (silver)</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Colorpoint (C locus)</label>
+              <select id="Cgen">
+                <option value="C/C">C / C (full pigment — no point)</option>
+                <option value="C/cs">C / cs (point carrier)</option>
+                <option value="cs/cs">cs / cs (colorpoint — Siamese type)</option>
+                <option value="cb/cb">cb / cb (Burmese sepia)</option>
+                <option value="cs/cb">cs / cb (mink)</option>
+                <option value="c/c">c / c (full albino)</option>
+              </select>
+            </div>
+
+            <div>
+              <label>S / W — white spotting & dominant white</label>
+              <select id="Sgen">
+                <option value="s/s">s / s (no white spotting)</option>
+                <option value="S/s">S / s (low/medium white)</option>
+                <option value="S/S">S / S (high white / van possible)</option>
+                <option value="W/--">W / - (dominant white)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="foot">
+            <div class="inline"><button id="checkBtn">Check single-cat plausibility</button>
+            <button id="offspringBtn">Open offspring calculator (short)</button></div>
+            <div class="muted" style="margin-top:8px">Tip: change Sex then pick red genotype; the checker will flag biologically inconsistent picks (e.g. a male with XO/XO unless XXY selected).</div>
+          </div>
+        </div>
+
+        <!-- Easy panel -->
+        <div id="easyPanel" class="panel" style="display:none">
+          <strong>Easy inputs — owner terms</strong>
+          <div style="margin-top:10px" class="grid">
+            <div>
+              <label>Sex</label>
+              <select id="easySex">
+                <option value="F">Female</option>
+                <option value="M">Male</option>
+              </select>
+            </div>
+            <div>
+              <label>Fur length</label>
+              <select id="easyFur">
+                <option>Short</option><option>Long</option>
+              </select>
+            </div>
+            <div>
+              <label>Fur color</label>
+              <select id="easyColor">
+                <option>Black</option><option>Blue/Gray</option><option>Chocolate</option><option>Cinnamon</option>
+                <option>Red/Orange</option><option>Cream</option><option>Lilac</option><option>Fawn</option>
+                <option>White</option>
+              </select>
+            </div>
+            <div>
+              <label>Pattern</label>
+              <select id="easyPattern">
+                <option>Solid</option><option>Tabby</option><option>Spotted</option><option>Ticked</option><option>Tortoiseshell</option>
+                <option>Bicolor</option><option>Colorpoint</option>
+              </select>
+            </div>
+            <div>
+              <label>Eye color</label>
+              <select id="easyEye">
+                <option>Amber</option><option>Green</option><option>Blue</option>
+              </select>
+            </div>
+          </div>
+          
+            <div style="margin-top:10px" class="foot small muted">Easy mode maps to alleles behind the scenes and runs the same plausibility rules.</div>
+            <button id="checkEasyBtn">Check Combination</button>
+        </div>
+        
+        <div class="panel">
+          <strong>Result</strong>
+          <div id="result" class="result">Choose options and press the check button.</div>
+        </div>
+      </div>
+
+      <!-- Right column: glossary/info + offspring tool -->
+      <div>
+        <div class="panel">
+          <strong>Trait info / glossary</strong>
+          <div id="info" class="info">Select any dropdown to see glossary text for that trait. The tool uses these rules: sex-linked red is X-linked; B locus has B/b/bl; D is recessive; I = inhibitor (silver); A = agouti; cs/cb = colorpoint/sepia; S/W white.</div>
+        </div>
+
+        <div id="offspringPanel" class="panel" style="display:none">
+          <strong>Offspring calculator (demo)</strong>
+          <div class="small muted">This mini tool focuses on sex-linked red (X-linked) and B locus example — expandable to other loci.</div>
+          <div style="margin-top:8px">
+            <label>Dam red genotype (choose an X genotype)</label>
+            <select id="damX">
+              <option value="XO/XO">XO/XO (red female)</option>
+              <option value="XO/Xo">XO/Xo (tortie female)</option>
+              <option value="Xo/Xo">Xo/Xo (non-red female)</option>
+            </select>
+            <label style="margin-top:8px">Sire red genotype</label>
+            <select id="sireX">
+              <option value="XO/Y">XO/Y (red male)</option>
+              <option value="Xo/Y">Xo/Y (non-red male)</option>
+            </select>
+
+            <hr style="margin:8px 0">
+            <div><button id="calcOff">Compute offspring probabilities (red / tortie / black-based)</button></div>
+            <div id="offspringResult" class="result" style="margin-top:8px">—</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <strong>Quick reference (rules used)</strong>
+          <ul class="muted small">
+            <li><b>Sex-linked red (O)</b> is X-linked: females have two X genotypes (XO/Xo etc.); males are XO/Y or Xo/Y. Tortoiseshell normally only females. Rare tortie males generally XXY (Klinefelter) or chimera.</li>
+            <li><b>B locus</b> has B (black) > b (chocolate) > bl (cinnamon). Two black parents can produce chocolate OR cinnamon only if carriers match.</li>
+            <li><b>D locus</b> (dilution) is recessive: d/d produces dilute colors (black→blue, chocolate→lilac, cinnamon→fawn, red→cream).</li>
+            <li><b>I (inhibitor)</b> causes silver/smoke: acts on agouti/nonagouti to create smoke or silver tabby.</li>
+            <li><b>Colorpoint</b> (cs/cb) — temperature sensitive albinism: colorpoint cats have pale bodies & blue eyes.</li>
+            <li><b>S / W</b> white spotting and dominant white interact with eye color (dominant white often produces blue or odd eyes).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+/* --- Glossary snippets (use longer text if you want) --- */
+const G = {
+  "XO/XO":"Female homozygous red — both X chromosomes carry the red allele. Phenotype: red-based.",
+  "XO/Xo":"Female heterozygous red (tortoiseshell possible) — one X red, one X non-red. Patches of red + non-red.",
+  "Xo/Xo":"Female non-red — no O allele present.",
+  "XO/Y":"Male red — male with red allele on X (red-based male).",
+  "Xo/Y":"Male non-red (no red allele).",
+  "XXY":"Male with two Xs + Y (possible tortoiseshell male via Klinefelter).",
+  "B locus":"B = black (dominant); b = chocolate (recessive to B); bl = cinnamon (recessive to B & b). Chocolate and cinnamon are eumelanin modifications.",
+  "D locus":"D = full color (dominant); d = dilute (recessive). d/d makes dilute colors: black→blue, chocolate→lilac, cinnamon→fawn, red→cream.",
+  "Dm":"Dilute modifier: dominant warm modifier acting on dilute phenotypes to create caramel/apricot variants.",
+  "A locus":"A (agouti) permits tabby (banded hair). a (nonagouti) suppresses banding → solid (or ghost markings).",
+  "Mc/Sp/Ta":"Tabby pattern modifiers: Mc (mackerel), Sp (spotted), Ta (ticked) + polygenic modifiers produce pattern varieties. Ticked (Ta) is a separate locus from Mackerel/Classic.",
+  "c/c": "Full albino (c/c) results in a completely white coat and pale blue or pinkish/lilac eyes due to a total lack of pigment.",
+  "I locus":"Inhibitor (I) causes silver / smoke series. In combination with agouti, it creates silver tabbies and chinchillas, which often have green to turquoise eyes.",
+  "C locus":"Colorpoint alleles (cs, cb) are temperature-sensitive forms of tyrosinase producing point patterns. Eye color is linked to the specific allele: cs/cs (deep blue), cs/cb (aqua/blue-green), cb/cb (yellow/gold).",
+  "S/W":"S locus = white spotting (range low→high). W = dominant white (complete white). Both W and high levels of S can disrupt pigment in the eyes, often resulting in blue or odd eyes (heterochromia)."
+};
+
+/* basic UI wiring */
+const modeSel = document.getElementById('mode');
+const expertPanel = document.getElementById('expertPanel');
+const easyPanel = document.getElementById('easyPanel');
+const info = document.getElementById('info');
+const resultBox = document.getElementById('result');
+const offspringPanel = document.getElementById('offspringPanel');
+
+modeSel.addEventListener('change', ()=>{
+  if(modeSel.value==='expert'){
+    expertPanel.style.display='block';
+    easyPanel.style.display='none';
+  } else {
+    expertPanel.style.display='none';
+    easyPanel.style.display='block';
+  }
+  resultBox.innerHTML = 'Choose options and press the check button.';
+});
+
+/* show glossary text when selecting relevant dropdowns */
+document.querySelectorAll('select').forEach(sel=>{
+  sel.addEventListener('focus', ()=> {
+    const key = sel.value;
+    if(G[key]) info.innerHTML = `<strong>${sel.previousElementSibling?.innerText || sel.getAttribute('id')}</strong><div style="margin-top:6px">${G[key]}</div>`;
+    else {
+      // try mapping some selects to keys
+      const id = sel.id;
+      if(id==='Bgen') info.innerHTML = `<strong>B locus</strong><div style="margin-top:6px">${G['B locus']}</div>`;
+      else if(id==='Dgen') info.innerHTML = `<strong>D locus</strong><div style="margin-top:6px">${G['D locus']}</div>`;
+      else if(id==='Agen') info.innerHTML = `<strong>A locus</strong><div style="margin-top:6px">${G['A locus']}</div>`;
+      else if(id==='Igen') info.innerHTML = `<strong>I locus</strong><div style="margin-top:6px">${G['I locus']}</div>`;
+      else if(id==='Cgen') info.innerHTML = `<strong>C locus</strong><div style="margin-top:6px">${G['C locus']}</div>`;
+      else if(id==='Sgen') info.innerHTML = `<strong>S / W</strong><div style="margin-top:6px">${G['S/W']}</div>`;
+      else info.innerHTML = 'Select an option to see glossary text for that trait.';
+    }
+  });
+});
+
+/* Convert expert genotype choices into phenotype descriptors (simplified) */
+function inferPhenotypeFromExpert(opts){
+  const out = {warnings:[], notes:[], phenotype:{}};
+  const { sex, redGen, Bgen, Dgen, Dm, Agen, patternGen, tickedGen, Igen, Cgen, Sgen, eye } = opts;
+
+  // Sex checks
+  if(sex==='M'){
+    if(redGen.includes('/') && !redGen.endsWith('/Y') && redGen !== 'XXY'){
+      out.warnings.push('Selected a 2-X genotype for a male — biologically a male should be XO/Y or Xo/Y (or XXY for rare tortie males).');
+    }
+  } else { // Female
+    if(redGen.endsWith('/Y')) out.warnings.push('Selected a Y-chromosome genotype for a female.');
+  }
+  
+  let isRed = redGen==='XO/XO' || redGen==='XO/Y';
+  let isTort = redGen==='XO/Xo' || redGen==='XXY';
+  
+  if(sex==='M' && isTort && redGen !== 'XXY') {
+    out.warnings.push('Male tortoiseshell phenotype is extremely unlikely unless the cat has a chromosomal abnormality like XXY (Klinefelter syndrome).');
+  }
+
+  // Phenotype inference
+  let baseB = 'black';
+  if(Bgen==='b/b') baseB='chocolate';
+  if(Bgen==='bl/bl') baseB='cinnamon';
+  if(Bgen==='B/b' || Bgen==='B/bl' || Bgen==='b/bl') baseB='black (carrier)';
+
+  let diluted = (Dgen==='d/d');
+  let hasDm = (Dm !== 'dm/dm');
+  function colorByBandD(base){
+    if(!diluted) return base;
+    if(base==='black') return hasDm ? 'caramel' : 'blue';
+    if(base==='chocolate') return hasDm ? 'caramel' : 'lilac';
+    if(base==='cinnamon') return hasDm ? 'apricot' : 'fawn';
+    return base;
+  }
+  const visibleBaseColor = colorByBandD(baseB);
+  
+  const agouti = (Agen!=='a/a');
+  let pattern = agouti ? 'tabby' : 'solid (nonagouti)';
+  if(agouti){
+    if(tickedGen !== 'ta/ta') pattern = 'ticked';
+    else if(patternGen.startsWith('Sp')) pattern = 'spotted tabby';
+    else if(patternGen.startsWith('mc')) pattern = 'classic tabby';
+    else pattern = 'mackerel tabby';
+  }
+
+  const silver = (Igen!=='i/i');
+  if(silver) {
+    if(agouti) out.notes.push('Inhibitor (I) + Agouti (A) produces silver tabby / chinchilla patterns.');
+    else out.notes.push('Inhibitor (I) + nonagouti (a/a) produces smoke.');
+  }
+
+  const isColorpoint = Cgen.includes('cs') || Cgen.includes('cb');
+  const isAlbino = Cgen === 'c/c';
+  const hasWhite = Sgen.includes('S') || Sgen.includes('W');
+
+  // Red cat specific rules
+  if(isRed && !agouti){
+    out.notes.push('A true "solid" red is not genetically possible. Red cats are fundamentally tabby, though markings may be very faint (epistatic effect of O over a/a).');
+  }
+
+  // --- EYE COLOR CHECKS ---
+  if (isColorpoint) {
+    if (Cgen === 'cs/cs' && eye !== 'Blue') {
+      out.warnings.push("Genetic mismatch: Siamese-type colorpoints (cs/cs) are genetically restricted to deep blue eyes.");
+    }
+    if (Cgen === 'cb/cb' && !['Golden/Yellow', 'Amber', 'Orange', 'Copper'].includes(eye)) {
+      out.warnings.push("Genetic mismatch: Burmese-type sepia (cb/cb) cats typically have yellow-to-gold eyes, not blue or green.");
+    }
+    if (Cgen === 'cs/cb' && eye !== 'Aqua/Turquoise') {
+      out.warnings.push("Genetic mismatch: Mink (cs/cb) cats are known for their distinctive aqua (blue-green) eye color.");
+    }
+  }
+  if (isAlbino && eye !== 'Lilac/Pink (Albino)' && eye !== 'Blue') {
+    out.warnings.push("Genetic mismatch: True albino (c/c) cats lack pigment, resulting in pale blue or pinkish/lilac eyes.");
+  }
+  if (Sgen === 'W/--') {
+    out.notes.push("Dominant White (W) is strongly associated with blue or odd eyes, as it prevents pigment cells (melanocytes) from reaching the iris during development.");
+  }
+  if (Sgen === 'S/S' && hasWhite) {
+    out.notes.push("High white spotting (S/S) can also lead to blue or odd eyes, especially if white covers the head/ears, for the same reason as Dominant White.");
+  }
+  if (eye === 'Odd Eyes' && Sgen === 's/s') {
+      out.warnings.push("Odd eyes (heterochromia) are extremely rare in cats without the Dominant White (W) or high white spotting (S) genes.");
+  }
+  if (eye === 'Blue' && Cgen === 'C/C' && !hasWhite && !isAlbino) {
+      out.warnings.push("Blue eyes in an adult, non-colorpoint, non-white cat are genetically very rare (e.g., Ojos Azules breed mutation). This is an unlikely combination.");
+  }
+  if(silver && agouti && !['Green', 'Aqua/Turquoise'].includes(eye)) {
+      out.notes.push("Chinchilla/silver tabby cats (Inhibitor + Agouti) typically have their melanin restricted, often resulting in green to turquoise eyes.");
+  }
+
+
+  if(Sgen==='W/--') {
+    out.notes.push('Dominant W makes the cat fully white, masking all other color/pattern genes. The underlying genetics are still carried.');
+  }
+
+  out.phenotype = {
+    visibleBase: visibleBaseColor,
+    pattern: pattern,
+    silver: silver ? 'yes' : 'no',
+    colorpoint: isColorpoint || isAlbino ? 'yes' : 'no',
+    white: Sgen,
+    red: isRed ? 'red-based' : (isTort?'tortoiseshell':'non-red'),
+    eye: eye
+  };
+  
+  if(out.warnings.length === 0) {
+    out.notes.unshift('<span class="good">✅ This combination appears genetically plausible based on the selected inputs.</span>');
+  }
+
+  return out;
+}
+
+document.getElementById('checkBtn').addEventListener('click', ()=>{
+  const opts = {
+    sex: document.getElementById('sex').value,
+    redGen: document.getElementById('redGen').value,
+    Bgen: document.getElementById('Bgen').value,
+    Dgen: document.getElementById('Dgen').value,
+    Dm: document.getElementById('Dm').value,
+    Agen: document.getElementById('Agen').value,
+    patternGen: document.getElementById('patternGen').value,
+    tickedGen: document.getElementById('tickedGen').value,
+    Igen: document.getElementById('Igen').value,
+    Cgen: document.getElementById('Cgen').value,
+    Sgen: document.getElementById('Sgen').value,
+    eye: document.getElementById('expertEye').value
+  };
+  const res = inferPhenotypeFromExpert(opts);
+  let html = '<div>';
+  html += `<div class="small"><strong>Inferred Phenotype</strong></div>`;
+  html += `<div class="muted small" style="margin-top:6px">Base: <strong>${res.phenotype.red} ${res.phenotype.visibleBase}</strong>, Pattern: <strong>${res.phenotype.pattern}</strong>, Eyes: <strong>${res.phenotype.eye}</strong>, Silver: <strong>${res.phenotype.silver}</strong>, White: <strong>${res.phenotype.white}</strong></div>`;
+  
+  if (res.warnings.length) {
+    html += '<div style="margin-top:10px"><strong>Plausibility Warnings</strong><ul>';
+    res.warnings.forEach(w=> html += `<li class="warning small">${w}</li>`);
+    html += '</ul></div>';
+  }
+
+  if (res.notes.length) {
+    html += '<div style="margin-top:10px"><strong>Genetic Notes</strong><ul>';
+    res.notes.forEach(n=> html += `<li class="small">${n}</li>`);
+    html += '</ul></div>';
+  }
+
+  html += '</div>';
+  resultBox.innerHTML = html;
+});
+
+
+document.getElementById('offspringBtn').addEventListener('click', ()=>{
+  offspringPanel.style.display = offspringPanel.style.display==='none' ? 'block' : 'none';
+});
+
+function parseXgeno(x){
+  if(x==='XXY') return ['XO','Xo','Y']; 
+  return x.split('/'); 
+}
+function calcOffspringFromX(dam, sire){
+  const damAlleles = parseXgeno(dam);
+  const sireAlleles = parseXgeno(sire);
+  const offspring = {};
+  const damXs = damAlleles.filter(a=>a.startsWith('XO') || a.startsWith('Xo'));
+  const sireGam = sireAlleles;
+  const total = damXs.length * sireGam.length;
+  damXs.forEach(dax => {
+    sireGam.forEach(sig => {
+      const kid = (sig==='Y') ? `${dax}/Y` : `${dax}/${sig}`;
+      const containsXO = kid.includes('XO');
+      let phenotype='non-red';
+      if(kid.includes('/Y')){
+        phenotype = containsXO ? 'red male' : 'non-red male';
+      } else {
+        if(kid === 'XO/Xo' || kid === 'Xo/XO') phenotype = 'tortoiseshell female';
+        else phenotype = containsXO ? 'red female' : 'non-red female';
+      }
+      offspring[phenotype] = (offspring[phenotype]||0) + 1;
+    });
+  });
+  const out = {};
+  for(const k in offspring) out[k] = Math.round(100 * offspring[k] / total);
+  return out;
+}
+
+function progenyB(b1, b2){
+  function gametes(gen){
+    const [a,b] = gen.split('/');
+    return [a, b];
+  }
+  const g1 = gametes(b1), g2 = gametes(b2);
+  const combos = {};
+  g1.forEach(a=> g2.forEach(b=>{
+    const sorted = [a,b].sort().join('/');
+    combos[sorted] = (combos[sorted]||0)+1;
+  }));
+  function phenoFromGen(gen){
+    const alleles = gen.split('/');
+    if(alleles.includes('B')) return 'black-based';
+    if(alleles.includes('b') && !alleles.includes('B')) {
+      if(alleles.includes('bl')) return 'chocolate carrier cinnamon';
+      return 'chocolate-based';
+    }
+    if(alleles.includes('bl') && !alleles.includes('B') && !alleles.includes('b')) return 'cinnamon-based';
+    return 'unknown';
+  }
+  const total = Object.values(combos).reduce((s,x)=>s+x,0);
+  const out = {};
+  for(const g in combos){
+    const p = phenoFromGen(g);
+    out[p] = (out[p]||0) + combos[g];
+  }
+  for(const k in out) out[k] = Math.round(100 * out[k] / total);
+  return out;
+}
+
+document.getElementById('calcOff').addEventListener('click', ()=>{
+  const dam = document.getElementById('damX').value;
+  const sire = document.getElementById('sireX').value;
+  const res = calcOffspringFromX(dam,sire);
+  const Bdam = document.getElementById('Bgen').value;
+  const Bsire = (document.getElementById('Bgen') ? document.getElementById('Bgen').value : 'B/B');
+  const bres = progenyB(Bdam, Bsire);
+  let out = '<div><strong>Sex-linked red offspring probabilities (approx)</strong>';
+  out += '<div class="muted small" style="margin-top:6px">';
+  for(const k in res) out += `<div>${k}: <strong>${res[k]}%</strong></div>`;
+  out += '</div>';
+  out += '<hr><strong>B-locus (example) — parental genotypes used:</strong><div class="muted small">Dam: '+Bdam+' — Sire: '+Bsire+'</div>';
+  out += '<div style="margin-top:6px" class="muted small">';
+  for(const k in bres) out += `<div>${k}: <strong>${bres[k]}%</strong></div>`;
+  out += '</div></div>';
+  document.getElementById('offspringResult').innerHTML = out;
+});
+
+document.getElementById("checkEasyBtn").addEventListener("click", () => {
+    const warnings = [];
+    const notes = [];
+    const sex = document.getElementById("easySex").value;
+    const eye = document.getElementById("easyEye").value;
+    const fur = document.getElementById("easyColor").value;
+    const pattern = document.getElementById("easyPattern").value;
+    const resultContainer = document.getElementById("result");
+
+    if (pattern === "Tortoiseshell" && sex === "M") {
+        warnings.push("Male tortoiseshell cats are genetically very rare. This usually requires a chromosomal abnormality (like XXY) and they are typically sterile.");
+    }
+    if (pattern === "Tortoiseshell" && (fur === "Red/Orange" || fur === "Cream")) {
+        warnings.push("For a tortoiseshell pattern, please select the cat's non-red color (e.g., Black, Blue, Chocolate). The red/cream patches are dictated by the tortoiseshell genetics itself, not the base color choice.");
+    }
+    if ((fur === "Red/Orange" || fur === "Cream") && pattern === "Solid") {
+        warnings.push("A true 'solid' red or cream cat is not genetically possible. These cats are always a form of tabby, although the markings can be very faint (low contrast).");
+    }
+    if (eye === "Blue" && pattern !== "Colorpoint" && pattern !== "Bicolor" && fur !== "White") {
+        notes.push("Blue eyes are uncommon in adult cats without the colorpoint pattern, a high degree of white spotting (found in some bicolors), or the dominant white gene. While not impossible, it's less common.");
+    }
+    if (pattern === "Colorpoint") {
+        notes.push("For colorpoint cats, eye color often varies by the specific genetics: Siamese-type points typically have blue eyes, Tonkinese-type 'mink' points often have aqua eyes, and Burmese-type 'sepia' points may have green or yellow eyes.");
+    }
+    if (fur === "White" && eye !== "Blue") {
+        notes.push("Dominant white cats often have blue or odd-colored eyes (one blue, one green/amber).");
+    }
+    
+    let html = '<div><strong>Easy Mode Plausibility Check</strong>';
+    if (warnings.length > 0) {
+      html += '<div style="margin-top:10px"><strong>Warnings / Genetic Rarities</strong><ul>';
+      warnings.forEach(w => {
+          html += `<li class="warning small">${w}</li>`;
+      });
+      html += '</ul></div>';
+    }
+    if (notes.length > 0) {
+        html += '<div style="margin-top:10px"><strong>Notes</strong><ul>';
+        notes.forEach(n => {
+            html += `<li class="small">${n}</li>`;
+        });
+        html += '</ul></div>';
+    }
+    if (warnings.length === 0) {
+      html += '<div class="good" style="margin-top:8px">✅ This combination appears genetically plausible based on the inputs.</div>';
+    }
+    html += '</div>';
+    resultContainer.innerHTML = html;
+});
+</script>
+</body>
 </html>
