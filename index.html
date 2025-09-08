@@ -299,6 +299,10 @@
 <script>
 /* --- Glossary snippets (use longer text if you want) --- */
 const G = {
+  "expertEye": "Eye color in cats is complex, controlled by genes governing pigment (melanin) in the iris. Blue eyes indicate a lack of melanin. Green, yellow, and copper shades result from increasing amounts and density of melanin. Coat color genes like Colorpoint (cs, cb), Albino (c), and Dominant White (W) have a strong influence on final eye color.",
+  "Dm": "Dilute modifier (Dm) is a dominant gene that only affects dilute coat colors (d/d). It 'warms up' the color, turning blue into caramel, lilac into a warmer brownish-grey, and fawn into apricot.",
+  "patternGen": "This locus controls the underlying tabby pattern. Mackerel (Mc) is dominant to classic (mc). Spotted (Sp) is thought to be a modifier of the mackerel pattern. These patterns are only visible if the cat is also Agouti (A/-).",
+  "tickedGen": "The Ticked gene (Ta) is dominant and masks other tabby patterns, resulting in agouti hairs over the whole body with minimal striping, usually confined to the legs, neck, and tail. This is the characteristic pattern of the Abyssinian breed.",
   "XO/XO":"Female homozygous red — both X chromosomes carry the red allele. Phenotype: red-based.",
   "XO/Xo":"Female heterozygous red (tortoiseshell possible) — one X red, one X non-red. Patches of red + non-red.",
   "Xo/Xo":"Female non-red — no O allele present.",
@@ -307,9 +311,7 @@ const G = {
   "XXY":"Male with two Xs + Y (possible tortoiseshell male via Klinefelter).",
   "B locus":"B = black (dominant); b = chocolate (recessive to B); bl = cinnamon (recessive to B & b). Chocolate and cinnamon are eumelanin modifications.",
   "D locus":"D = full color (dominant); d = dilute (recessive). d/d makes dilute colors: black→blue, chocolate→lilac, cinnamon→fawn, red→cream.",
-  "Dm":"Dilute modifier: dominant warm modifier acting on dilute phenotypes to create caramel/apricot variants.",
   "A locus":"A (agouti) permits tabby (banded hair). a (nonagouti) suppresses banding → solid (or ghost markings).",
-  "Mc/Sp/Ta":"Tabby pattern modifiers: Mc (mackerel), Sp (spotted), Ta (ticked) + polygenic modifiers produce pattern varieties. Ticked (Ta) is a separate locus from Mackerel/Classic.",
   "c/c": "Full albino (c/c) results in a completely white coat and pale blue or pinkish/lilac eyes due to a total lack of pigment.",
   "I locus":"Inhibitor (I) causes silver / smoke series. In combination with agouti, it creates silver tabbies and chinchillas, which often have green to turquoise eyes.",
   "C locus":"Colorpoint alleles (cs, cb) are temperature-sensitive forms of tyrosinase producing point patterns. Eye color is linked to the specific allele: cs/cs (deep blue), cs/cb (aqua/blue-green), cb/cb (yellow/gold).",
@@ -338,21 +340,32 @@ modeSel.addEventListener('change', ()=>{
 /* show glossary text when selecting relevant dropdowns */
 document.querySelectorAll('select').forEach(sel=>{
   sel.addEventListener('focus', ()=> {
-    const key = sel.value;
-    if(G[key]) info.innerHTML = `<strong>${sel.previousElementSibling?.innerText || sel.getAttribute('id')}</strong><div style="margin-top:6px">${G[key]}</div>`;
+    const key = sel.id; // Use ID for consistent mapping
+    let glossaryKey = sel.value; // Default to value for specific options
+
+    // Map select IDs to a primary glossary key
+    if (key === 'expertEye') glossaryKey = 'expertEye';
+    else if (key === 'Dm') glossaryKey = 'Dm';
+    else if (key === 'patternGen') glossaryKey = 'patternGen';
+    else if (key === 'tickedGen') glossaryKey = 'tickedGen';
+    else if (key === 'Bgen') glossaryKey = 'B locus';
+    else if (key === 'Dgen') glossaryKey = 'D locus';
+    else if (key === 'Agen') glossaryKey = 'A locus';
+    else if (key === 'Igen') glossaryKey = 'I locus';
+    else if (key === 'Cgen') glossaryKey = 'C locus';
+    else if (key === 'Sgen') glossaryKey = 'S/W';
+
+    if(G[glossaryKey]) {
+      info.innerHTML = `<strong>${sel.previousElementSibling?.innerText || sel.getAttribute('id')}</strong><div style="margin-top:6px">${G[glossaryKey]}</div>`;
+    } else if (G[sel.value]) { // Fallback to value for specific genotypes like XO/XO
+        info.innerHTML = `<strong>${sel.previousElementSibling?.innerText || sel.getAttribute('id')}</strong><div style="margin-top:6px">${G[sel.value]}</div>`;
+    }
     else {
-      // try mapping some selects to keys
-      const id = sel.id;
-      if(id==='Bgen') info.innerHTML = `<strong>B locus</strong><div style="margin-top:6px">${G['B locus']}</div>`;
-      else if(id==='Dgen') info.innerHTML = `<strong>D locus</strong><div style="margin-top:6px">${G['D locus']}</div>`;
-      else if(id==='Agen') info.innerHTML = `<strong>A locus</strong><div style="margin-top:6px">${G['A locus']}</div>`;
-      else if(id==='Igen') info.innerHTML = `<strong>I locus</strong><div style="margin-top:6px">${G['I locus']}</div>`;
-      else if(id==='Cgen') info.innerHTML = `<strong>C locus</strong><div style="margin-top:6px">${G['C locus']}</div>`;
-      else if(id==='Sgen') info.innerHTML = `<strong>S / W</strong><div style="margin-top:6px">${G['S/W']}</div>`;
-      else info.innerHTML = 'Select an option to see glossary text for that trait.';
+      info.innerHTML = 'Select an option to see glossary text for that trait.';
     }
   });
 });
+
 
 /* Convert expert genotype choices into phenotype descriptors (simplified) */
 function inferPhenotypeFromExpert(opts){
