@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const isSilver = inputs.Igen !== 'i/i';
         const isRed = inputs.redGen.includes('XO');
         const isTortie = inputs.redGen === 'XO/Xo';
+        const isPointed = inputs.Cgen === 'cs/cs' || inputs.Cgen === 'cs/cb';
+        const hasWhiteSpotting = inputs.Sgen === 'S/s' || inputs.Sgen === 'S/S';
 
         // Helper booleans for conditions that prevent color expression
         const isDominantWhite = inputs.Sgen === 'W/--';
@@ -42,41 +44,45 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasColorHidden = isDominantWhite || isAlbino;
         
         // ** A. Base Color Layer **
-        // Dominant White masks everything else, so it's the first priority.
-        if (inputs.Sgen === 'W/--') {
+        if (isDominantWhite || isAlbino) {
             layers.push('base_white.png');
         } 
-        // Colorpoint has its own special base.
-        else if (inputs.Cgen === 'cs/cs' || inputs.Cgen === 'cs/cb') {
-            layers.push('base_point.png');
-        }
-        // Otherwise, determine the base eumelanin color.
         else {
              if (inputs.Egen === 'e/e' && !isRed) {
                 layers.push(isDilute ? 'base_amber_dilute.png' : 'base_amber.png');
-            } else if (inputs.Bgen.includes('B')) { // Black series
+            } else if (inputs.Bgen.includes('B')) {
                 layers.push(isDilute ? 'base_blue.png' : 'base_black.png');
-            } else if (inputs.Bgen.includes('b')) { // Chocolate series
-                layers.push(isDilute ? 'base_lilac.png' : 'base_chocolate.png');
-            } else if (inputs.Bgen.includes('bl')) { // Cinnamon series
+            } else if (inputs.Bgen === 'bl/bl') {
                 layers.push(isDilute ? 'base_fawn.png' : 'base_cinnamon.png');
+            } else if (inputs.Bgen.includes('b')) {
+                layers.push(isDilute ? 'base_lilac.png' : 'base_chocolate.png');
             }
         }
         
-        // ** B. Red / Tortie Overlay Layer **
-        // If the cat is red or tortie, we add an overlay. This goes on top of the base eumelanin color.
-        if (inputs.Sgen !== 'W/--') { // Don't add red if the cat is dominant white
-            if(isTortie) {
-                layers.push('overlay_tortie.png');
-            } else if (isRed && !isTortie) {
-                // If dilute, use cream overlay, otherwise use red
+        // ** B. Red / Tortie / Calico Overlay Layer (UPGRADED LOGIC) **
+        if (!hasColorHidden) {
+            if (isTortie) {
+                // Check for the most complex combinations first
+                if (isPointed && hasWhiteSpotting) {
+                    layers.push('overlay_calicopoint.png');
+                } else if (isAgouti && hasWhiteSpotting) {
+                    layers.push('overlay_caliby.png'); // Tabby Calico
+                } else if (hasWhiteSpotting) {
+                    layers.push('overlay_calico.png'); // Standard Calico
+                } else if (isAgouti) {
+                    layers.push('overlay_torbie.png'); // Tabby Tortie
+                } else {
+                    layers.push('overlay_tortie.png'); // Standard Tortie
+                }
+            } else if (isRed) {
+                // This handles non-tortie red cats
                 layers.push(isDilute ? 'overlay_cream.png' : 'overlay_red.png');
             }
         }
 
         // ** C. Tabby Pattern Layer **
-        // The pattern is only visible on Agouti cats (or red cats, which are always tabby).
-        if ((isAgouti || isRed) && inputs.Sgen !== 'W/--') {
+        // This still runs for red/cream cats, but the tortie-tabby patterns are now handled above.
+        if ((isAgouti || isRed) && !isTortie && !hasColorHidden) {
             let patternPrefix = isSilver ? 'pattern_silver_' : 'pattern_';
 
             if (inputs.tickedGen !== 'ta/ta') {
@@ -89,71 +95,106 @@ document.addEventListener('DOMContentLoaded', () => {
                 layers.push(patternPrefix + 'mackerel.png');
             }
         }
+
+        // ** D. Colorpoint Overlay Layer **
+        // This only runs for NON-TORTIE pointed cats. Calico points are handled by their own special overlay.
+        if (isPointed && !isTortie && !hasColorHidden) {
+            layers.push('overlay_point.png');
+        }
         
-        // ** D. Wideband (Golden) Overlay Layer **
-        // Golden is only visible on Agouti cats and modifies the tabby pattern.
+        // ** E. Wideband (Golden) Overlay Layer **
         if (inputs.Wbgen === 'wb/wb' && isAgouti && !hasColorHidden) {
             layers.push('overlay_golden.png');
         }
         
-        // ** E. Karpati (Roan) Overlay Layer **
-        // Karpati adds a roaning effect over the existing coat color and pattern.
+        // ** F. Karpati (Roan) Overlay Layer **
         if (inputs.Kgen === 'K/k' && !hasColorHidden) {
             layers.push('overlay_karpati.png');
         }
 
-        // ** F. White Spotting Layer **
-        if (inputs.Sgen === 'S/s') {
-            layers.push('white_low.png');
-        } else if (inputs.Sgen === 'S/S') {
-            layers.push('white_high.png');
+        // ** G. White Spotting Layer **
+        // This logic is now simpler: it only adds white if the cat has white spotting AND is NOT a tortie/calico,
+        // because the calico overlays already include their own white patches.
+        if (hasWhiteSpotting && !isTortie) {
+            if (inputs.Sgen === 'S/s') {
+                layers.push('pattern_bicolor.png'); 
+            } else if (inputs.Sgen === 'S/S') {
+                layers.push('white_high.png');
+            }
         }
 
-        // ** E. Eye Color Layer **
-        // The eye color is determined by a few genes, but we can use the user's direct selection.
-        if (inputs.eyeColor.includes('Blue')) {
-            layers.push('eyes_blue.png');
-        } else if (inputs.eyeColor.includes('Aqua')) {
-            layers.push('eyes_aqua.png');
-        } else if (inputs.eyeColor.includes('Green')) {
-            layers.push('eyes_green.png');
-        } else if (inputs.eyeColor.includes('Golden') || inputs.eyeColor.includes('Yellow')) { //Done
-            layers.push('eyes_yellow.png');
-        } else if (inputs.eyeColor.includes('Amber') || inputs.eyeColor.includes('Copper')) {
-            layers.push('eyes_copper.png');
-        } else if (inputs.eyeColor.includes('Hazel')) { //Done
-            layers.push('eyes_hazel.png');
-        } else if (inputs.eyeColor.includes('Orange')) { //Done
-            layers.push('eyes_orange.png');
-        } else if (inputs.eyeColor.includes('Lilac/Pink (Albino)')) {
-            layers.push('eyes_lilac.png');
-        }
-        // Odd eyes can be more complex, for now we can default to one color or handle it later.
-        //if (inputs.eyeColor.includes('Odd Eyes')) {
-        //    layers.push('eyes_odd_blue_green.png'); // Example for one combination
-        //}
+        // ** H. Eye Color Layer **
+if (inputs.eyeColor.includes('Odd Eyes')) {
+            // Helper function to get a clean color name from the dropdown value
+            const mapColorToFilename = (colorValue) => {
+                // SAFETY CHECK: If the value is undefined or not a string, return a default.
+                if (!colorValue || typeof colorValue !== 'string') return 'Green'; 
+                
+                if (colorValue.includes('Blue')) return 'Blue';
+                if (colorValue.includes('Green')) return 'Green';
+                if (colorValue.includes('Yellow')) return 'Yellow';
+                if (colorValue.includes('Copper')) return 'Copper';
+                return 'Green'; // Default fallback
+            };
+            
+            // Read the left and right eye values HERE, only when needed.
+            const leftEyeValue = document.getElementById('leftEye').value;
+            const rightEyeValue = document.getElementById('rightEye').value;
 
-        // ** F. Outline Layer **
-        // The outline always goes on top of everything else.
+            const leftColor = mapColorToFilename(leftEyeValue);
+            const rightColor = mapColorToFilename(rightEyeValue);
+            
+            // Construct the filename dynamically
+            const eyeImageFile = `eyes/${leftColor}L${rightColor}R.png`;
+            layers.push(eyeImageFile);
+
+            //Same color selected for both eyes
+            if (leftColor === rightColor) {
+                // If they are the same, use the standard single-color eye image.
+                const eyeImageFile = `eyes/eyes_${leftColor.toLowerCase()}.png`;
+                layers.push(eyeImageFile);
+            } else {
+                // If they are different, construct the dynamic odd-eye filename.
+                const eyeImageFile = `eyes/${leftColor}L${rightColor}R.png`;
+                layers.push(eyeImageFile);
+            }
+
+        } else { // Fallback to original logic for single-colored eyes
+            if (inputs.eyeColor.includes('Blue')) {
+                layers.push('eyes/eyes_blue.png');
+            } else if (inputs.eyeColor.includes('Aqua')) {
+                layers.push('eyes/eyes_aqua.png');
+            } else if (inputs.eyeColor.includes('Green')) {
+                layers.push('eyes/eyes_green.png');
+            } else if (inputs.eyeColor.includes('Golden') || inputs.eyeColor.includes('Yellow')) {
+                layers.push('eyes/eyes_yellow.png');
+            } else if (inputs.eyeColor.includes('Amber') || inputs.eyeColor.includes('Copper')) {
+                layers.push('eyes/eyes_copper.png');
+            } else if (inputs.eyeColor.includes('Hazel')) {
+                layers.push('eyes/eyes_hazel.png');
+            } else if (inputs.eyeColor.includes('Orange')) {
+                layers.push('eyes/eyes_orange.png');
+            } else if (inputs.eyeColor.includes('Pink')) {
+                 layers.push('eyes/eyes_pink.png');
+            } else if (inputs.eyeColor.includes('Lilac')) {
+                 layers.push('eyes/eyes_lilac.png');
+            }
+        }
+
+        // ** I. Outline Layer **
         layers.push('outline.png');
         
         // --- 3. Render the cat image ---
-        // Clear any previous images
         catContainer.innerHTML = '';
-
-        // Create and add each image layer to the container
         layers.forEach(imageFile => {
             const img = document.createElement('img');
             img.src = imageFolderPath + imageFile;
-            img.className = 'cat-image-layer'; // Apply the CSS class for stacking
-            img.alt = `Cat image layer: ${imageFile}`; // For accessibility
-            
-            // Add an error handler in case an image is missing
+            img.className = 'cat-image-layer';
+            img.alt = `Cat image layer: ${imageFile}`;
             img.onerror = () => { 
                 console.warn(`Image not found: ${img.src}. You may need to create this file.`);
-                img.style.display = 'none'; // Hide the broken image icon
+                img.style.display = 'none';
             };
-
             catContainer.appendChild(img);
         });
     }

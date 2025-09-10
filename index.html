@@ -71,7 +71,7 @@
             <div><label>Ticked Tabby (Ta locus)</label><select id="tickedGen"><option value="ta/ta">ta/ta (not ticked)</option><option value="Ta/ta">Ta/ta (hetero ticked)</option><option value="Ta/Ta">Ta/Ta (homo ticked)</option></select></div>
             <div><label>I locus (Inhibitor)</label><select id="Igen"><option value="i/i">i/i (non-silver)</option><option value="I/i">I/i (hetero silver)</option><option value="I/I">I/I (homo silver)</option></select></div>
             <div><label>Colorpoint (C locus)</label><select id="Cgen"><option value="C/C">C/C (full pigment)</option><option value="C/cs">C/cs (point carrier)</option><option value="C/cb">C/cb (sepia carrier)</option><option value="cs/cs">cs/cs (colorpoint)</option><option value="cb/cb">cb/cb (sepia)</option><option value="cs/cb">cs/cb (mink)</option><option value="c/c">c/c (albino)</option></select></div>
-            <div><label>White spotting (S/W)</label><select id="Sgen"><option value="s/s">s/s (no white)</option><option value="S/s">S/s (spotted)</option><option value="S/S">S/S (high white)</option><option value="W/--">W/- (dominant white)</option></select></div>
+            <div><label>White spotting (S/W)</label><select id="Sgen"><option value="s/s">s/s (no white)</option><option value="S/s">S/s (bicolor/spotted)</option><option value="S/S">S/S (high white)</option><option value="W/--">W/- (dominant white)</option></select></div>
             <div><label>E locus (Amber)</label><select id="Egen"><option value="E/E">E/E (non-amber)</option><option value="E/e">E/e (carrier amber)</option><option value="e/e">e/e (amber)</option></select></div>
             <div><label>Wideband (Corin)</label><select id="Wbgen"><option value="Wb/Wb">Wb/Wb (not golden)</option><option value="Wb/wb">Wb/wb (carrier golden)</option><option value="wb/wb">wb/wb (golden)</option></select></div>
             <div><label>Karpati</label><select id="Kgen"><option value="k/k">k/k (not karpati)</option><option value="K/k">K/k (karpati)</option></select></div>
@@ -84,7 +84,6 @@
           <strong>Easy inputs — owner terms</strong>
           <div class="grid" style="margin-top:10px">
             <div><label>Sex</label><select id="easySex"><option value="F">Female</option><option value="M">Male</option></select></div>
-            <div><label>Fur length</label><select id="easyFur"><option>Short</option><option>Long</option></select></div>
             <div><label>Fur color</label><select id="easyColor"><option>Black</option><option>Blue/Gray</option><option>Chocolate</option><option>Cinnamon</option><option>Red/Orange</option><option>Cream</option><option>Lilac</option><option>Fawn</option><option>White</option></select></div>
             <div><label>Pattern</label><select id="easyPattern"><option>Solid</option><option>Tabby</option><option>Spotted</option><option>Ticked</option><option>Tortoiseshell</option><option>Bicolor</option><option>Colorpoint</option></select></div>
             <div><label>Eye color</label><select id="easyEye"><option>🟠 Amber</option><option>🟢 Green</option><option>🔵 Blue</option></select></div>
@@ -227,6 +226,9 @@ document.getElementById('checkBtn').addEventListener('click', () => {
   };
   
   let warnings = [];
+  let notes = []; // For non-critical genetic info
+
+  // --- Plausibility Warnings ---
   if (opts.sex === 'M' && (opts.redGen.includes('XO/X') || opts.redGen.includes('Xo/X'))) {
     warnings.push("Male cat selected with a female (two X) red genotype.");
   }
@@ -246,12 +248,17 @@ document.getElementById('checkBtn').addEventListener('click', () => {
     warnings.push("Mismatch: cs/cs (colorpoint) genotype genetically results in blue eyes.");
   }
   if (opts.Egen === 'e/e' && opts.redGen.includes('XO')) {
-    warnings.push("Amber (e/e) is selected, but its effect is masked by the dominant Red (XO) gene. The cat will appear red.");
+    notes.push("Amber (e/e) is selected, but its effect is masked by the dominant Red (XO) gene. The cat will appear red.");
   }
   if (opts.Wbgen === 'wb/wb' && opts.Agen === 'a/a') {
-    warnings.push("Golden/Wideband (wb/wb) is selected, but its effect is only visible on Agouti (A/-) cats, not on solid (a/a) cats.");
+    notes.push("Golden/Wideband (wb/wb) is selected, but its effect is only visible on Agouti (A/-) cats, not on solid (a/a) cats.");
+  }
+  // NEW NOTE FOR RED + NON-AGOUTI
+  if (opts.redGen.includes('XO') && opts.Agen === 'a/a') {
+    notes.push("Non-agouti (a/a) has no visible effect on red/cream cats. They will still appear as tabbies due to the powerful red (O) gene.");
   }
 
+  // --- Build Result HTML ---
   let html = '';
   if (warnings.length) {
     html += '<strong>Plausibility Warnings</strong><ul>';
@@ -260,6 +267,13 @@ document.getElementById('checkBtn').addEventListener('click', () => {
   } else {
     html = '<div class="good">✅ This combination appears genetically plausible.</div>';
   }
+  
+  if (notes.length) {
+    html += '<div style="margin-top:10px"><strong>Genetic Notes</strong><ul>';
+    notes.forEach(n => html += `<li class="small">${n}</li>`);
+    html += '</ul></div>';
+  }
+
   UI.resultBox.innerHTML = html;
 });
 
@@ -288,6 +302,7 @@ function calculateBLocus(geno1, geno2) {
   for (const geno in results) {
     let pheno = 'Cinnamon';
     if (geno.includes('B')) pheno = 'Black-based';
+    else if (geno.includes('bl/bl')) pheno = 'Cinnamon';
     else if (geno.includes('b')) pheno = 'Chocolate-based';
     phenotypes[pheno] = (phenotypes[pheno] || 0) + results[geno];
   }
@@ -370,49 +385,115 @@ document.getElementById('calculateOffspringBtn').addEventListener('click', () =>
   html += `<div style="margin-top:8px"><b>White Spotting Genotypes</b></div>`;
   for(const key in sResults) { if (sResults[key] > 0) html += `<div>${key}: <strong>${Math.round(sResults[key])}%</strong></div>`; }
 
+  // NEW: Check for red + non-agouti possibility
+  const hasRedOffspring = Object.keys(redResults).some(key => key.includes('Red') && redResults[key] > 0);
+  const hasNonAgoutiOffspring = aPhenos.Recessive > 0;
+
+  if (hasRedOffspring && hasNonAgoutiOffspring) {
+    html += `<div class='small' style='margin-top:12px; border-top: 1px solid #e0e0e0; padding-top: 10px;'>
+               <b>Genetic Note:</b> Any red/cream offspring from this pairing will appear as tabbies, even if their genetic code is for non-agouti (a/a).
+             </div>`;
+  }
+
   html += '</div>';
   UI.resultBox.innerHTML = html;
 });
 
-// CORRECTED EASY MODE BUTTON LOGIC
+// UPGRADED EASY MODE BUTTON LOGIC
 document.getElementById("checkEasyBtn").addEventListener("click", () => {
+    // --- Plausibility Check (runs first) ---
     const warnings = [];
     const notes = [];
     const sex = document.getElementById("easySex").value;
-    const eye = document.getElementById("easyEye").value; // This value includes an emoji, e.g., "🔵 Blue"
+    const eye = document.getElementById("easyEye").value;
     const fur = document.getElementById("easyColor").value;
     const pattern = document.getElementById("easyPattern").value;
 
     if (pattern === "Tortoiseshell" && sex === "M") {
         warnings.push("Male tortoiseshell cats are genetically very rare (usually requires an XXY chromosomal abnormality).");
     }
-    if ((fur === "Red/Orange" || fur === "Cream") && pattern === "Solid") {
-        notes.push("A true 'solid' red or cream is genetically not possible. The non-agouti (a/a) gene is suppressed by the orange (O) gene, so red cats will always show some tabby markings.");
+    if (pattern === 'Tortoiseshell' && (fur === 'Red/Orange' || fur === 'Cream')) {
+        warnings.push("Redundant selection: The 'Tortoiseshell' pattern already includes red/cream. Please select a non-red base color like Black or Blue.");
     }
-    // Corrected check to see if the eye color string *includes* "Blue"
+    if ((fur === "Red/Orange" || fur === "Cream") && pattern === "Solid") {
+        notes.push("<b>Note:</b> A true 'solid' red or cream cat is genetically not possible. The red gene always lets some tabby markings show through, so a tabby pattern will be displayed.");
+    }
     if (eye.includes("Blue") && pattern !== "Colorpoint" && fur !== "White") {
         notes.push("Blue eyes in adult cats are rare without the genes for Colorpoint (like Siamese) or Dominant White.");
     }
     
     let html = '<div><strong>Plausibility Check</strong>';
-    if (warnings.length) {
+    if (warnings.length > 0) {
       html += '<div style="margin-top:10px"><strong>Plausibility Warnings</strong><ul>';
       warnings.forEach(w => html += `<li class="warning small">${w}</li>`);
       html += '</ul></div>';
     }
     
-    if (notes.length) {
+    if (notes.length > 0) {
         html += '<div style="margin-top:10px"><strong>Genetic Notes</strong><ul>';
         notes.forEach(n => html += `<li class="small">${n}</li>`);
         html += '</ul></div>';
     }
 
-    if (warnings.length === 0) {
+    if (warnings.length === 0 && notes.length === 0) {
       html += '<div class="good" style="margin-top:8px">✅ This combination appears genetically plausible.</div>';
     }
     
     UI.resultBox.innerHTML = html;
+
+    // --- Defer the drawing logic to ensure messages are seen first ---
+    setTimeout(() => {
+        // 1. Define default expert values
+        let expertVals = {
+            Sgen: 's/s', Cgen: 'C/C', Agen: 'a/a', Bgen: 'B/B', Dgen: 'D/D',
+            redGen: sex === 'M' ? 'Xo/Y' : 'Xo/Xo',
+            tickedGen: 'ta/ta', patternGen: 'Mc/Mc', Igen: 'i/i', Egen: 'E/E', Wbgen: 'Wb/Wb', Kgen: 'k/k'
+        };
+
+        // 2. Override defaults based on easy selections
+        if (fur === 'White') {
+            expertVals.Sgen = 'W/--';
+        } else {
+            if (pattern === 'Colorpoint') expertVals.Cgen = 'cs/cs';
+            if (pattern === 'Bicolor') expertVals.Sgen = 'S/s';
+            if (pattern === 'Tortoiseshell') {
+                if (sex === 'F') expertVals.redGen = 'XO/Xo';
+            }
+
+            if (fur === 'Red/Orange' || fur === 'Cream') {
+                expertVals.redGen = sex === 'M' ? 'XO/Y' : 'XO/XO';
+                if (fur === 'Cream') expertVals.Dgen = 'd/d';
+            } else if (pattern !== 'Tortoiseshell') { // Don't override eumelanin if tortie
+                const colorMap = {
+                    'Black': { Bgen: 'B/B', Dgen: 'D/D' }, 'Blue/Gray': { Bgen: 'B/B', Dgen: 'd/d' },
+                    'Chocolate': { Bgen: 'b/b', Dgen: 'D/D' }, 'Lilac': { Bgen: 'b/b', Dgen: 'd/d' },
+                    'Cinnamon': { Bgen: 'bl/bl', Dgen: 'D/D' }, 'Fawn': { Bgen: 'bl/bl', Dgen: 'd/d' }
+                };
+                if (colorMap[fur]) Object.assign(expertVals, colorMap[fur]);
+            }
+
+            // Force Agouti (tabby visible) for red cats and tabby-type patterns
+            if (['Tabby', 'Spotted', 'Ticked'].includes(pattern) || fur === 'Red/Orange' || fur === 'Cream') {
+                expertVals.Agen = 'A/A';
+                if (pattern === 'Spotted') expertVals.patternGen = 'Sp/Sp';
+                if (pattern === 'Ticked') expertVals.tickedGen = 'Ta/Ta';
+            }
+        }
+        
+        // 3. Update the Expert Panel dropdowns with the mapped values
+        document.getElementById('sex').value = sex;
+        document.getElementById('expertEye').value = eye;
+        for (const key in expertVals) {
+            if (document.getElementById(key)) {
+                document.getElementById(key).value = expertVals[key];
+            }
+        }
+        
+        // 4. Trigger the expert button's click event to run its own check and draw the cat
+        document.getElementById('checkBtn').click();
+    }, 10); // A tiny delay is enough to push this to the end of the execution queue
 });
+
 
 // Initialize UI
 UI.switchToMode('expert');
