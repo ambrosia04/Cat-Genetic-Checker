@@ -35,7 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const isSilver = inputs.Igen !== 'i/i';
         const isRed = inputs.redGen.includes('XO');
         const isTortie = inputs.redGen === 'XO/Xo';
-        const isPointed = inputs.Cgen === 'cs/cs' || inputs.Cgen === 'cs/cb';
+        const isPointed = inputs.Cgen === 'cs/cs';
+        const isMink = inputs.Cgen === 'cs/cb';
+        const isSepia = inputs.Cgen === 'cb/cb';
         const hasWhiteSpotting = inputs.Sgen === 'S/s' || inputs.Sgen === 'S/S';
 
         // Helper booleans for conditions that prevent color expression
@@ -100,6 +102,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // This only runs for NON-TORTIE pointed cats. Calico points are handled by their own special overlay.
         if (isPointed && !isTortie && !hasColorHidden) {
             layers.push('overlay_point.png');
+        }
+        if (isMink && !isTortie && !hasColorHidden) {
+            layers.push('overlay_mink.png');
+        }
+        if (isSepia && !isTortie && !hasColorHidden) {
+            layers.push('overlay_sepia.png');
         }
         
         // ** E. Wideband (Golden) Overlay Layer **
