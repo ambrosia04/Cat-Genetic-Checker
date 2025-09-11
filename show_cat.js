@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ** C. Tabby Pattern Layer **
         // This still runs for red/cream cats, but the tortie-tabby patterns are now handled above.
+        // MODIFIED: This now correctly selects the silver tabby pattern if the cat is silver.
         if ((isAgouti || isRed) && !isTortie && !hasColorHidden) {
             let patternPrefix = isSilver ? 'pattern_silver_' : 'pattern_';
 
@@ -111,7 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // ** E. Wideband (Golden) Overlay Layer **
-        if (inputs.Wbgen === 'wb/wb' && isAgouti && !hasColorHidden) {
+        // MODIFIED: Golden only shows if the cat is Agouti AND NOT Silver, ensuring silver takes precedence.
+        if (inputs.Wbgen === 'wb/wb' && isAgouti && !isSilver && !hasColorHidden) {
             layers.push('overlay_golden.png');
         }
         
@@ -132,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // ** H. Eye Color Layer **
-if (inputs.eyeColor.includes('Odd Eyes')) {
+        if (inputs.eyeColor.includes('Odd Eyes')) {
             // Helper function to get a clean color name from the dropdown value
             const mapColorToFilename = (colorValue) => {
                 // SAFETY CHECK: If the value is undefined or not a string, return a default.
@@ -152,10 +154,6 @@ if (inputs.eyeColor.includes('Odd Eyes')) {
             const leftColor = mapColorToFilename(leftEyeValue);
             const rightColor = mapColorToFilename(rightEyeValue);
             
-            // Construct the filename dynamically
-            const eyeImageFile = `eyes/${leftColor}L${rightColor}R.png`;
-            layers.push(eyeImageFile);
-
             //Same color selected for both eyes
             if (leftColor === rightColor) {
                 // If they are the same, use the standard single-color eye image.

@@ -170,11 +170,11 @@ const G = {
   "Bgen": "B = black (dominant); b = chocolate (recessive to B); bl = cinnamon (recessive to B & b).",
   "Dgen":"D = full color (dominant); d = dilute (recessive). d/d makes black→blue, chocolate→lilac, etc.",
   "Agen":"A (agouti) permits tabby patterns. a (nonagouti) suppresses it, creating a solid appearance.",
-  "Igen":"Inhibitor (I) is dominant and creates the silver/smoke series by removing pigment from the hair base.",
+  "Igen":"The dominant Inhibitor gene (I/-) suppresses eumelanin pigment, turning the light-colored bands in a tabby pattern to silver. In a non-agouti (a/a) cat, it creates a 'smoke' effect by creating a silver-white base to the hair.",
   "Cgen":"Colorpoint alleles are temperature-sensitive forms of albinism. C (full color) > cs (Siamese) = cb (Burmese) > c (albino). cs/cs creates deep blue eyes; cb/cb creates yellow/gold eyes; cs/cb (mink) creates aqua eyes.",
   "Sgen":"S locus = white spotting. W = dominant white. Both can disrupt eye pigment, causing blue or odd eyes.",
   "Egen": "Amber (Extension locus) is a recessive trait (e/e) found in Norwegian Forest Cats. It causes a cat's black/brown pigment to fade to a golden/apricot color as it ages. It is masked by the dominant Red (O) gene.",
-  "Wbgen": "Wideband (Corin locus) is a recessive trait (wb/wb) that widens the yellow phaeomelanin bands on the hair shaft, creating a 'golden' or 'sunshine' effect. It is only visible on Agouti (tabby) cats.",
+  "Wbgen": "Wideband (Corin locus) is a recessive trait (wb/wb) that widens the lighter phaeomelanin bands on the hair. In an Agouti (tabby) cat *without* the Inhibitor gene, this creates a 'golden' appearance. It is not expressed on non-agouti (a/a) cats.",
   "Kgen": "Karpati is a dominant roan pattern (K/-) that causes white hairs to be intermixed with colored hairs, creating a 'powdery' look. The specific gene and its location have not yet been identified."
 };
 
@@ -223,6 +223,7 @@ document.getElementById('checkBtn').addEventListener('click', () => {
     Cgen: document.getElementById('Cgen').value, Sgen: document.getElementById('Sgen').value,
     eye: document.getElementById('expertEye').value, Agen: document.getElementById('Agen').value,
     Egen: document.getElementById('Egen').value, Wbgen: document.getElementById('Wbgen').value,
+    Igen: document.getElementById('Igen').value
   };
   
   let warnings = [];
@@ -253,7 +254,11 @@ document.getElementById('checkBtn').addEventListener('click', () => {
   if (opts.Wbgen === 'wb/wb' && opts.Agen === 'a/a') {
     notes.push("Golden/Wideband (wb/wb) is selected, but its effect is only visible on Agouti (A/-) cats, not on solid (a/a) cats.");
   }
-  // NEW NOTE FOR RED + NON-AGOUTI
+  // NEW NOTE FOR SILVER + GOLDEN INTERACTION
+  if (opts.Igen !== 'i/i' && opts.Wbgen === 'wb/wb') {
+    notes.push("Both Silver (Inhibitor) and Golden (Wideband) are selected. The Inhibitor gene will suppress the golden effect, resulting in a silver tabby cat. The widebanding will affect the silver expression.");
+  }
+  // NOTE FOR RED + NON-AGOUTI
   if (opts.redGen.includes('XO') && opts.Agen === 'a/a') {
     notes.push("Non-agouti (a/a) has no visible effect on red/cream cats. They will still appear as tabbies due to the powerful red (O) gene.");
   }
