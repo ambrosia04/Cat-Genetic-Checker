@@ -47,156 +47,138 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // ** A. Base Color Layer **
         if (isDominantWhite || isAlbino) {
-            layers.push('base_white.png');
+            layers.push({ src: 'base_white.png' });
         } 
         else {
              if (inputs.Egen === 'e/e' && !isRed) {
-                layers.push(isDilute ? 'base_amber_dilute.png' : 'base_amber.png');
+                layers.push({ src: (isDilute ? 'base_amber_dilute.png' : 'base_amber.png') });
             } else if (inputs.Bgen.includes('B')) {
-                layers.push(isDilute ? 'base_blue.png' : 'base_black.png');
+                layers.push({ src: (isDilute ? 'base_blue.png' : 'base_black.png') });
             } else if (inputs.Bgen === 'bl/bl') {
-                layers.push(isDilute ? 'base_fawn.png' : 'base_cinnamon.png');
+                layers.push({ src: (isDilute ? 'base_fawn.png' : 'base_cinnamon.png') });
             } else if (inputs.Bgen.includes('b')) {
-                layers.push(isDilute ? 'base_lilac.png' : 'base_chocolate.png');
+                layers.push({ src: (isDilute ? 'base_lilac.png' : 'base_chocolate.png') });
             }
         }
         
-        // ** B. Red / Tortie / Calico Overlay Layer (UPGRADED LOGIC) **
+        // ** B. Red / Tortie / Calico Overlay Layer **
         if (!hasColorHidden) {
             if (isTortie) {
-                // Check for the most complex combinations first
                 if (isPointed && hasWhiteSpotting) {
-                    layers.push('overlay_calicopoint.png');
+                    layers.push({ src: 'overlay_calicopoint.png' });
                 } else if (isAgouti && hasWhiteSpotting) {
-                    layers.push('overlay_caliby.png'); // Tabby Calico
+                    layers.push({ src: 'overlay_caliby.png' });
                 } else if (hasWhiteSpotting) {
-                    layers.push('overlay_calico.png'); // Standard Calico
+                    layers.push({ src: 'overlay_calico.png' });
                 } else if (isAgouti) {
-                    layers.push('overlay_torbie.png'); // Tabby Tortie
+                    layers.push({ src: 'overlay_torbie.png' });
                 } else {
-                    layers.push('overlay_tortie.png'); // Standard Tortie
+                    layers.push({ src: 'overlay_tortie.png' });
                 }
             } else if (isRed) {
-                // This handles non-tortie red cats
-                layers.push(isDilute ? 'overlay_cream.png' : 'overlay_red.png');
+                layers.push({ src: (isDilute ? 'overlay_cream.png' : 'overlay_red.png') });
             }
         }
 
-        // ** C. Tabby Pattern Layer **
-        // This still runs for red/cream cats, but the tortie-tabby patterns are now handled above.
-        // MODIFIED: This now correctly selects the silver tabby pattern if the cat is silver.
-        if ((isAgouti || isRed) && !isTortie && !hasColorHidden) {
-            let patternPrefix = isSilver ? 'pattern_silver_' : 'pattern_';
-
-            if (inputs.tickedGen !== 'ta/ta') {
-                layers.push(patternPrefix + 'ticked.png');
-            } else if (inputs.patternGen.includes('mc')) {
-                layers.push(patternPrefix + 'classic.png');
-            } else if (inputs.patternGen.includes('Sp')) {
-                layers.push(patternPrefix + 'spotted.png');
-            } else { // Mackerel is the default tabby
-                layers.push(patternPrefix + 'mackerel.png');
-            }
-        }
-
-        // ** D. Colorpoint Overlay Layer **
-        // This only runs for NON-TORTIE pointed cats. Calico points are handled by their own special overlay.
+        // ** C. Colorpoint Overlay Layer **
         if (isPointed && !isTortie && !hasColorHidden) {
-            layers.push('overlay_point.png');
+            layers.push({ src: 'overlay_point.png' });
         }
         if (isMink && !isTortie && !hasColorHidden) {
-            layers.push('overlay_mink.png');
+            layers.push({ src: 'overlay_mink.png' });
         }
         if (isSepia && !isTortie && !hasColorHidden) {
-            layers.push('overlay_sepia.png');
+            layers.push({ src: 'overlay_sepia.png' });
         }
         
-        // ** E. Wideband (Golden) Overlay Layer **
-        // MODIFIED: Golden only shows if the cat is Agouti AND NOT Silver, ensuring silver takes precedence.
-        if (inputs.Wbgen === 'wb/wb' && isAgouti && !isSilver && !hasColorHidden) {
-            layers.push('overlay_golden.png');
+        // ** D. Wideband (Golden) Overlay Layer **
+        // MODIFIED: This check no longer excludes silver cats.
+        if (inputs.Wbgen === 'wb/wb' && isAgouti && !hasColorHidden) {
+            layers.push({ src: 'overlay_golden.png' });
+        }
+        
+        // ** E. Tabby Pattern Layer (runs AFTER golden) **
+        if ((isAgouti || isRed) && !isTortie && !hasColorHidden) {
+            let patternPrefix = isSilver ? 'pattern_silver_' : 'pattern_';
+            let tabbyLayer = { src: '', opacity: 1.0 };
+
+            if (inputs.Wbgen === 'Wb/wb') {
+                tabbyLayer.opacity = 0.5;
+            } else if (inputs.Wbgen === 'Wb/Wb') {
+                tabbyLayer.opacity = 0.25;
+            }
+
+            if (inputs.tickedGen !== 'ta/ta') {
+                tabbyLayer.src = patternPrefix + 'ticked.png';
+            } else if (inputs.patternGen.includes('mc')) {
+                tabbyLayer.src = patternPrefix + 'classic.png';
+            } else if (inputs.patternGen.includes('Sp')) {
+                tabbyLayer.src = patternPrefix + 'spotted.png';
+            } else {
+                tabbyLayer.src = patternPrefix + 'mackerel.png';
+            }
+            layers.push(tabbyLayer);
         }
         
         // ** F. Karpati (Roan) Overlay Layer **
         if (inputs.Kgen === 'K/k' && !hasColorHidden) {
-            layers.push('overlay_karpati.png');
+            layers.push({ src: 'overlay_karpati.png' });
         }
 
         // ** G. White Spotting Layer **
-        // This logic is now simpler: it only adds white if the cat has white spotting AND is NOT a tortie/calico,
-        // because the calico overlays already include their own white patches.
         if (hasWhiteSpotting && !isTortie) {
             if (inputs.Sgen === 'S/s') {
-                layers.push('pattern_bicolor.png'); 
+                layers.push({ src: 'pattern_bicolor.png' }); 
             } else if (inputs.Sgen === 'S/S') {
-                layers.push('white_high.png');
+                layers.push({ src: 'white_high.png' });
             }
         }
 
         // ** H. Eye Color Layer **
+        let eyeLayerSrc = '';
         if (inputs.eyeColor.includes('Odd Eyes')) {
-            // Helper function to get a clean color name from the dropdown value
             const mapColorToFilename = (colorValue) => {
-                // SAFETY CHECK: If the value is undefined or not a string, return a default.
                 if (!colorValue || typeof colorValue !== 'string') return 'Green'; 
-                
                 if (colorValue.includes('Blue')) return 'Blue';
                 if (colorValue.includes('Green')) return 'Green';
                 if (colorValue.includes('Yellow')) return 'Yellow';
                 if (colorValue.includes('Copper')) return 'Copper';
-                return 'Green'; // Default fallback
+                return 'Green';
             };
-            
-            // Read the left and right eye values HERE, only when needed.
             const leftEyeValue = document.getElementById('leftEye').value;
             const rightEyeValue = document.getElementById('rightEye').value;
-
             const leftColor = mapColorToFilename(leftEyeValue);
             const rightColor = mapColorToFilename(rightEyeValue);
             
-            //Same color selected for both eyes
             if (leftColor === rightColor) {
-                // If they are the same, use the standard single-color eye image.
-                const eyeImageFile = `eyes/eyes_${leftColor.toLowerCase()}.png`;
-                layers.push(eyeImageFile);
+                eyeLayerSrc = `eyes/eyes_${leftColor.toLowerCase()}.png`;
             } else {
-                // If they are different, construct the dynamic odd-eye filename.
-                const eyeImageFile = `eyes/${leftColor}L${rightColor}R.png`;
-                layers.push(eyeImageFile);
+                eyeLayerSrc = `eyes/${leftColor}L${rightColor}R.png`;
             }
-
-        } else { // Fallback to original logic for single-colored eyes
-            if (inputs.eyeColor.includes('Blue')) {
-                layers.push('eyes/eyes_blue.png');
-            } else if (inputs.eyeColor.includes('Aqua')) {
-                layers.push('eyes/eyes_aqua.png');
-            } else if (inputs.eyeColor.includes('Green')) {
-                layers.push('eyes/eyes_green.png');
-            } else if (inputs.eyeColor.includes('Golden') || inputs.eyeColor.includes('Yellow')) {
-                layers.push('eyes/eyes_yellow.png');
-            } else if (inputs.eyeColor.includes('Amber') || inputs.eyeColor.includes('Copper')) {
-                layers.push('eyes/eyes_copper.png');
-            } else if (inputs.eyeColor.includes('Hazel')) {
-                layers.push('eyes/eyes_hazel.png');
-            } else if (inputs.eyeColor.includes('Orange')) {
-                layers.push('eyes/eyes_orange.png');
-            } else if (inputs.eyeColor.includes('Pink')) {
-                 layers.push('eyes/eyes_pink.png');
-            } else if (inputs.eyeColor.includes('Lilac')) {
-                 layers.push('eyes/eyes_lilac.png');
-            }
+        } else {
+            if (inputs.eyeColor.includes('Blue')) eyeLayerSrc = 'eyes/eyes_blue.png';
+            else if (inputs.eyeColor.includes('Aqua')) eyeLayerSrc = 'eyes/eyes_aqua.png';
+            else if (inputs.eyeColor.includes('Green')) eyeLayerSrc = 'eyes/eyes_green.png';
+            else if (inputs.eyeColor.includes('Golden') || inputs.eyeColor.includes('Yellow')) eyeLayerSrc = 'eyes/eyes_yellow.png';
+            else if (inputs.eyeColor.includes('Amber') || inputs.eyeColor.includes('Copper')) eyeLayerSrc = 'eyes/eyes_copper.png';
+            else if (inputs.eyeColor.includes('Hazel')) eyeLayerSrc = 'eyes/eyes_hazel.png';
+            else if (inputs.eyeColor.includes('Orange')) eyeLayerSrc = 'eyes/eyes_orange.png';
+            else if (inputs.eyeColor.includes('Pink')) eyeLayerSrc = 'eyes/eyes_pink.png';
+            else if (inputs.eyeColor.includes('Lilac')) eyeLayerSrc = 'eyes/eyes_lilac.png';
         }
+        if (eyeLayerSrc) layers.push({ src: eyeLayerSrc });
 
         // ** I. Outline Layer **
-        layers.push('outline.png');
+        layers.push({ src: 'outline.png' });
         
         // --- 3. Render the cat image ---
         catContainer.innerHTML = '';
-        layers.forEach(imageFile => {
+        layers.forEach(layer => {
             const img = document.createElement('img');
-            img.src = imageFolderPath + imageFile;
+            img.src = imageFolderPath + layer.src;
+            img.style.opacity = layer.opacity || 1.0; 
             img.className = 'cat-image-layer';
-            img.alt = `Cat image layer: ${imageFile}`;
+            img.alt = `Cat image layer: ${layer.src}`;
             img.onerror = () => { 
                 console.warn(`Image not found: ${img.src}. You may need to create this file.`);
                 img.style.display = 'none';
