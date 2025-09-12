@@ -66,7 +66,7 @@
             <div><label>B locus (eumelanin)</label><select id="Bgen"><option value="B/B">B/B (black)</option><option value="B/b">B/b (carrier choc)</option><option value="B/bl">B/bl (carrier cinna)</option><option value="b/b">b/b (chocolate)</option><option value="b/bl">b/bl (choc carrier cinna)</option><option value="bl/bl">bl/bl (cinnamon)</option></select></div>
             <div><label>D locus (dilution)</label><select id="Dgen"><option value="D/D">D/D (full color)</option><option value="D/d">D/d (carrier dilute)</option><option value="d/d">d/d (diluted)</option></select></div>
             <div><label>Dilute modifier (Dm)</label><select id="Dm"><option value="dm/dm">dm/dm (no modifier)</option><option value="Dm/dm">Dm/dm (hetero modifier)</option><option value="Dm/Dm">Dm/Dm (homo modifier)</option></select></div>
-            <div><label>A locus (Agouti)</label><select id="Agen"><option value="A/A">A/A (agouti)</option><option value="A/a">A/a (agouti carrier)</option><option value="a/a">a/a (non-agouti)</option></select></div>
+            <div><label>A locus (Agouti)</label><select id="Agen"><option value="A/A">A/A (agouti)</option><option value="A/a">A/a (agouti (carrier solid))</option><option value="a/a">a/a (non-agouti)</option></select></div>
             <div><label>Tabby pattern</label><select id="patternGen"><option value="Mc/Mc">Mc/Mc (homo mackerel)</option><option value="Mc/mc">Mc/mc (hetero mackerel)</option><option value="mc/mc">mc/mc (classic)</option><option value="Sp/Sp">Sp/Sp (spotted)</option></select></div>
             <div><label>Ticked Tabby (Ta locus)</label><select id="tickedGen"><option value="ta/ta">ta/ta (not ticked)</option><option value="Ta/ta">Ta/ta (hetero ticked)</option><option value="Ta/Ta">Ta/Ta (homo ticked)</option></select></div>
             <div><label>I locus (Inhibitor)</label><select id="Igen"><option value="i/i">i/i (non-silver)</option><option value="I/i">I/i (hetero silver)</option><option value="I/I">I/I (homo silver)</option></select></div>
@@ -254,10 +254,11 @@ document.getElementById('checkBtn').addEventListener('click', () => {
   if (opts.Wbgen === 'wb/wb' && opts.Agen === 'a/a') {
     notes.push("Golden/Wideband (wb/wb) is selected, but its effect is only visible on Agouti (A/-) cats, not on solid (a/a) cats.");
   }
-  // NEW NOTE FOR SILVER + GOLDEN INTERACTION
+  // NOTE FOR SILVER + GOLDEN INTERACTION
   if (opts.Igen !== 'i/i' && opts.Wbgen === 'wb/wb') {
-    notes.push("Both Silver (Inhibitor) and Golden (Wideband) are selected. The Inhibitor gene will suppress the golden effect, resulting in a silver tabby cat. The widebanding will affect the silver expression.");
+    notes.push("The inhibitor gene will suppress the golden color while maintaining the widebanding effect. This will result in a silver tabby with a diffused pattern, or a silver shaded/shell.");
   }
+  
   // NOTE FOR RED + NON-AGOUTI
   if (opts.redGen.includes('XO') && opts.Agen === 'a/a') {
     notes.push("Non-agouti (a/a) has no visible effect on red/cream cats. They will still appear as tabbies due to the powerful red (O) gene.");
