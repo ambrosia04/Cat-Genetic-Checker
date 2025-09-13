@@ -66,14 +66,14 @@
             <div><label>B locus (eumelanin)</label><select id="Bgen"><option value="B/B">B/B (black)</option><option value="B/b">B/b (carrier choc)</option><option value="B/bl">B/bl (carrier cinna)</option><option value="b/b">b/b (chocolate)</option><option value="b/bl">b/bl (choc carrier cinna)</option><option value="bl/bl">bl/bl (cinnamon)</option></select></div>
             <div><label>D locus (dilution)</label><select id="Dgen"><option value="D/D">D/D (full color)</option><option value="D/d">D/d (carrier dilute)</option><option value="d/d">d/d (diluted)</option></select></div>
             <div><label>Dilute modifier (Dm)</label><select id="Dm"><option value="dm/dm">dm/dm (no modifier)</option><option value="Dm/dm">Dm/dm (hetero modifier)</option><option value="Dm/Dm">Dm/Dm (homo modifier)</option></select></div>
-            <div><label>A locus (Agouti)</label><select id="Agen"><option value="A/A">A/A (agouti)</option><option value="A/a">A/a (agouti (carrier solid))</option><option value="a/a">a/a (non-agouti)</option></select></div>
+            <div><label>A locus (Agouti)</label><select id="Agen"><option value="A/A">A/A (agouti)</option><option value="A/a">A/a (agouti, carries solid)</option><option value="a/a">a/a (non-agouti)</option></select></div>
             <div><label>Tabby pattern</label><select id="patternGen"><option value="Mc/Mc">Mc/Mc (homo mackerel)</option><option value="Mc/mc">Mc/mc (hetero mackerel)</option><option value="mc/mc">mc/mc (classic)</option><option value="Sp/Sp">Sp/Sp (spotted)</option></select></div>
             <div><label>Ticked Tabby (Ta locus)</label><select id="tickedGen"><option value="ta/ta">ta/ta (not ticked)</option><option value="Ta/ta">Ta/ta (hetero ticked)</option><option value="Ta/Ta">Ta/Ta (homo ticked)</option></select></div>
             <div><label>I locus (Inhibitor)</label><select id="Igen"><option value="i/i">i/i (non-silver)</option><option value="I/i">I/i (hetero silver)</option><option value="I/I">I/I (homo silver)</option></select></div>
             <div><label>Colorpoint (C locus)</label><select id="Cgen"><option value="C/C">C/C (full pigment)</option><option value="C/cs">C/cs (point carrier)</option><option value="C/cb">C/cb (sepia carrier)</option><option value="cs/cs">cs/cs (colorpoint)</option><option value="cb/cb">cb/cb (sepia)</option><option value="cs/cb">cs/cb (mink)</option><option value="c/c">c/c (albino)</option></select></div>
             <div><label>White spotting (S/W)</label><select id="Sgen"><option value="s/s">s/s (no white)</option><option value="S/s">S/s (bicolor/spotted)</option><option value="S/S">S/S (high white)</option><option value="W/--">W/- (dominant white)</option></select></div>
             <div><label>E locus (Amber)</label><select id="Egen"><option value="E/E">E/E (non-amber)</option><option value="E/e">E/e (carrier amber)</option><option value="e/e">e/e (amber)</option></select></div>
-            <div><label>Wideband (Corin)</label><select id="Wbgen"><option value="Wb/Wb">Wb/Wb (not golden)</option><option value="Wb/wb">Wb/wb (carrier golden)</option><option value="wb/wb">wb/wb (golden)</option></select></div>
+            <div><label>Sunshine (Corin)</label><select id="Wbgen"><option value="Wb/Wb">Wb/Wb (not sunshine)</option><option value="Wb/wb">Wb/wb (carrier sunshine)</option><option value="wb/wb">wb/wb (sunshine)</option></select></div>
             <div><label>Karpati</label><select id="Kgen"><option value="k/k">k/k (not karpati)</option><option value="K/k">K/k (karpati)</option></select></div>
           </div>
           <div class="foot"><button id="checkBtn"><strong>Check cat plausibility</strong></button><div class="muted" style="margin-top:8px">Tip: Change sex then select the red genotype.</div></div>
@@ -101,14 +101,14 @@
               <div><label>Red (O locus)</label><select id="dam_redGen"><option value="XO/XO">XO/XO (red)</option><option value="XO/Xo">XO/Xo (tortie)</option><option value="Xo/Xo">Xo/Xo (non-red)</option></select></div>
               <div><label>B locus</label><select id="dam_Bgen"><option value="B/B">B/B</option><option value="B/b">B/b</option><option value="B/bl">B/bl</option><option value="b/b">b/b</option><option value="b/bl">b/bl</option><option value="bl/bl">bl/bl</option></select></div>
               <div><label>Dilution</label><select id="dam_Dgen"><option value="D/D">D/D</option><option value="D/d">D/d</option><option value="d/d">d/d</option></select></div>
-              <div><label>Agouti</label><select id="dam_Agen"><option value="A/A">A/A</option><option value="A/a">A/a</option><option value="a/a">a/a</option></select></div>
+              <div><label>Agouti</label><select id="dam_Agen"><option value="A/A">A/A</option><option value="A/a">A/a (agouti, carries solid)</option><option value="a/a">a/a</option></select></div>
               <div><label>Tabby</label><select id="dam_patternGen"><option value="Mc/Mc">Mc/Mc</option><option value="Mc/mc">Mc/mc</option><option value="mc/mc">mc/mc</option></select></div>
               <div><label>Ticked</label><select id="dam_tickedGen"><option value="Ta/Ta">Ta/Ta</option><option value="Ta/ta">Ta/ta</option><option value="ta/ta">ta/ta</option></select></div>
               <div><label>Inhibitor</label><select id="dam_Igen"><option value="I/I">I/I</option><option value="I/i">I/i</option><option value="i/i">i/i</option></select></div>
               <div><label>Colorpoint</label><select id="dam_Cgen"><option value="C/C">C/C</option><option value="C/cs">C/cs</option><option value="C/cb">C/cb</option><option value="cs/cs">cs/cs</option><option value="cb/cb">cb/cb</option><option value="cs/cb">cs/cb</option><option value="c/c">c/c</option></select></div>
               <div><label>White Spotting</label><select id="dam_Sgen"><option value="s/s">s/s</option><option value="S/s">S/s</option><option value="S/S">S/S</option></select></div>
               <div><label>Amber (E)</label><select id="dam_Egen"><option value="E/E">E/E</option><option value="E/e">E/e</option><option value="e/e">e/e</option></select></div>
-              <div><label>Wideband (Wb)</label><select id="dam_Wbgen"><option value="Wb/Wb">Wb/Wb</option><option value="Wb/wb">Wb/wb</option><option value="wb/wb">wb/wb</option></select></div>
+              <div><label>Sunshine (Wb)</label><select id="dam_Wbgen"><option value="Wb/Wb">Wb/Wb</option><option value="Wb/wb">Wb/wb</option><option value="wb/wb">wb/wb</option></select></div>
               <div><label>Karpati</label><select id="dam_Kgen"><option value="k/k">k/k</option><option value="K/k">K/k</option></select></div>
             </div></div>
             <!-- CAT 2 (SIRE) -->
@@ -117,14 +117,14 @@
               <div><label>Red (O locus)</label><select id="sire_redGen"><option value="XO/Y">XO/Y (red)</option><option value="Xo/Y">Xo/Y (non-red)</option></select></div>
               <div><label>B locus</label><select id="sire_Bgen"><option value="B/B">B/B</option><option value="B/b">B/b</option><option value="B/bl">B/bl</option><option value="b/b">b/b</option><option value="b/bl">b/bl</option><option value="bl/bl">bl/bl</option></select></div>
               <div><label>Dilution</label><select id="sire_Dgen"><option value="D/D">D/D</option><option value="D/d">D/d</option><option value="d/d">d/d</option></select></div>
-              <div><label>Agouti</label><select id="sire_Agen"><option value="A/A">A/A</option><option value="A/a">A/a</option><option value="a/a">a/a</option></select></div>
+              <div><label>Agouti</label><select id="sire_Agen"><option value="A/A">A/A</option><option value="A/a">A/a (agouti, carries solid)</option><option value="a/a">a/a</option></select></div>
               <div><label>Tabby</label><select id="sire_patternGen"><option value="Mc/Mc">Mc/Mc</option><option value="Mc/mc">Mc/mc</option><option value="mc/mc">mc/mc</option></select></div>
               <div><label>Ticked</label><select id="sire_tickedGen"><option value="Ta/Ta">Ta/Ta</option><option value="Ta/ta">Ta/ta</option><option value="ta/ta">ta/ta</option></select></div>
               <div><label>Inhibitor</label><select id="sire_Igen"><option value="I/I">I/I</option><option value="I/i">I/i</option><option value="i/i">i/i</option></select></div>
               <div><label>Colorpoint</label><select id="sire_Cgen"><option value="C/C">C/C</option><option value="C/cs">C/cs</option><option value="C/cb">C/cb</option><option value="cs/cs">cs/cs</option><option value="cb/cb">cb/cb</option><option value="cs/cb">cs/cb</option><option value="c/c">c/c</option></select></div>
               <div><label>White Spotting</label><select id="sire_Sgen"><option value="s/s">s/s</option><option value="S/s">S/s</option><option value="S/S">S/S</option></select></div>
               <div><label>Amber (E)</label><select id="sire_Egen"><option value="E/E">E/E</option><option value="E/e">E/e</option><option value="e/e">e/e</option></select></div>
-              <div><label>Wideband (Wb)</label><select id="sire_Wbgen"><option value="Wb/Wb">Wb/Wb</option><option value="Wb/wb">Wb/wb</option><option value="wb/wb">wb/wb</option></select></div>
+              <div><label>Sunshine (Wb)</label><select id="sire_Wbgen"><option value="Wb/Wb">Wb/Wb</option><option value="Wb/wb">Wb/wb</option><option value="wb/wb">wb/wb</option></select></div>
               <div><label>Karpati</label><select id="sire_Kgen"><option value="k/k">k/k</option><option value="K/k">K/k</option></select></div>
             </div></div>
           </div>
@@ -137,7 +137,6 @@
       <div>
         <div class="panel"><strong>Trait info / glossary</strong><div id="info" class="info">Select any dropdown to see glossary text for that trait.</div></div>
         
-        <!-- CAT IMAGE CONTAINER IS NOW HERE -->
         <div class="panel">
             <strong>Cat Preview</strong>
             <div id="catImageContainer" style="position: relative; width: 300px; height: 300px; margin: 10px auto;"></div>
@@ -152,7 +151,7 @@
             <li><b>Colorpoint (C locus)</b> is recessive. C > cs = cb > c. cs/cs creates deep blue eyes.</li>
             <li><b>White Spotting (S)</b> is incompletely dominant. S/S has more white than S/s.</li>
             <li><b>Amber (E)</b> is recessive (e/e) and is masked by sex-linked red (O).</li>
-            <li><b>Wideband (Wb)</b> is recessive (wb/wb) and is only visible on agouti (A/-) cats.</li>
+            <li><b>Sunshine (Wb)</b> is a recessive trait (wb/wb) linked to the Corin gene, visible on agouti (A/-) cats.</li>
             <li><b>Karpati (K)</b> is a dominant roan pattern. Its genetic locus is not yet identified.</li>
         </ul></div>
       </div>
@@ -169,12 +168,12 @@ const G = {
   "redGen": "Sex-linked red (Orange) is on the X-chromosome. O creates red pigment, while o allows black/brown pigment. Females can be XO/Xo (tortoiseshell), while males are either XO/Y (red) or Xo/Y (non-red).",
   "Bgen": "B = black (dominant); b = chocolate (recessive to B); bl = cinnamon (recessive to B & b).",
   "Dgen":"D = full color (dominant); d = dilute (recessive). d/d makes black→blue, chocolate→lilac, etc.",
-  "Agen":"A (agouti) permits tabby patterns. a (nonagouti) suppresses it, creating a solid appearance.",
+  "Agen":"A (agouti) permits tabby patterns. a (nonagouti) suppresses it, creating a solid appearance. A solid (a/a) cat cannot carry the dominant tabby gene.",
   "Igen":"The dominant Inhibitor gene (I/-) suppresses eumelanin pigment, turning the light-colored bands in a tabby pattern to silver. In a non-agouti (a/a) cat, it creates a 'smoke' effect by creating a silver-white base to the hair.",
   "Cgen":"Colorpoint alleles are temperature-sensitive forms of albinism. C (full color) > cs (Siamese) = cb (Burmese) > c (albino). cs/cs creates deep blue eyes; cb/cb creates yellow/gold eyes; cs/cb (mink) creates aqua eyes.",
   "Sgen":"S locus = white spotting. W = dominant white. Both can disrupt eye pigment, causing blue or odd eyes.",
   "Egen": "Amber (Extension locus) is a recessive trait (e/e) found in Norwegian Forest Cats. It causes a cat's black/brown pigment to fade to a golden/apricot color as it ages. It is masked by the dominant Red (O) gene.",
-  "Wbgen": "Wideband (Corin locus) is a recessive trait (wb/wb) that widens the lighter phaeomelanin bands on the hair. In an Agouti (tabby) cat *without* the Inhibitor gene, this creates a 'golden' appearance. It is not expressed on non-agouti (a/a) cats.",
+  "Wbgen": "The Corin gene is responsible for the recessive 'Sunshine' trait (wb/wb) in Siberians, which creates a golden appearance. This trait widens the lighter phaeomelanin bands on the hair. It is only visible on Agouti (A/-) cats and is separate from the Inhibitor (silver) gene.",
   "Kgen": "Karpati is a dominant roan pattern (K/-) that causes white hairs to be intermixed with colored hairs, creating a 'powdery' look. The specific gene and its location have not yet been identified."
 };
 
@@ -252,11 +251,11 @@ document.getElementById('checkBtn').addEventListener('click', () => {
     notes.push("Amber (e/e) is selected, but its effect is masked by the dominant Red (XO) gene. The cat will appear red.");
   }
   if (opts.Wbgen === 'wb/wb' && opts.Agen === 'a/a') {
-    notes.push("Golden/Wideband (wb/wb) is selected, but its effect is only visible on Agouti (A/-) cats, not on solid (a/a) cats.");
+    notes.push("Sunshine (wb/wb) is selected, but its effect is only visible on Agouti (A/-) cats, not on solid (a/a) cats.");
   }
-  // NOTE FOR SILVER + GOLDEN INTERACTION
+  // NOTE FOR SILVER + SUNSHINE INTERACTION
   if (opts.Igen !== 'i/i' && opts.Wbgen === 'wb/wb') {
-    notes.push("The inhibitor gene will suppress the golden color while maintaining the widebanding effect. This will result in a silver tabby with a diffused pattern, or a silver shaded/shell.");
+    notes.push("The inhibitor gene (silver) will suppress the sunshine color while maintaining the widebanding effect. This will result in a silver tabby with a diffused pattern, or a silver shaded/shell.");
   }
   
   // NOTE FOR RED + NON-AGOUTI
@@ -380,7 +379,7 @@ document.getElementById('calculateOffspringBtn').addEventListener('click', () =>
   formatResults('Ticked Pattern', { 'Ticked (Ta/-)': taPhenos.Dominant, 'Not Ticked (ta/ta)': taPhenos.Recessive });
   formatResults('Silver/Smoke', { 'Silver/Smoke (I/-)': iPhenos.Dominant, 'Non-Silver (i/i)': iPhenos.Recessive });
   formatResults('Amber', { 'Amber (e/e)': ePhenos.Recessive, 'Non-Amber (E/-)': ePhenos.Dominant });
-  formatResults('Wideband/Golden', { 'Golden (wb/wb)': wbPhenos.Recessive, 'Not Golden (Wb/-)': wbPhenos.Dominant });
+  formatResults('Sunshine', { 'Sunshine (wb/wb)': wbPhenos.Recessive, 'Not Sunshine (Wb/-)': wbPhenos.Dominant });
   formatResults('Karpati Pattern', { 'Karpati (K/-)': kPhenos.Dominant, 'Not Karpati (k/k)': kPhenos.Recessive });
 
   const cResults = calculateLocus(dam.C, sire.C);
@@ -391,7 +390,6 @@ document.getElementById('calculateOffspringBtn').addEventListener('click', () =>
   html += `<div style="margin-top:8px"><b>White Spotting Genotypes</b></div>`;
   for(const key in sResults) { if (sResults[key] > 0) html += `<div>${key}: <strong>${Math.round(sResults[key])}%</strong></div>`; }
 
-  // NEW: Check for red + non-agouti possibility
   const hasRedOffspring = Object.keys(redResults).some(key => key.includes('Red') && redResults[key] > 0);
   const hasNonAgoutiOffspring = aPhenos.Recessive > 0;
 
@@ -449,14 +447,12 @@ document.getElementById("checkEasyBtn").addEventListener("click", () => {
 
     // --- Defer the drawing logic to ensure messages are seen first ---
     setTimeout(() => {
-        // 1. Define default expert values
         let expertVals = {
             Sgen: 's/s', Cgen: 'C/C', Agen: 'a/a', Bgen: 'B/B', Dgen: 'D/D',
             redGen: sex === 'M' ? 'Xo/Y' : 'Xo/Xo',
             tickedGen: 'ta/ta', patternGen: 'Mc/Mc', Igen: 'i/i', Egen: 'E/E', Wbgen: 'Wb/Wb', Kgen: 'k/k'
         };
 
-        // 2. Override defaults based on easy selections
         if (fur === 'White') {
             expertVals.Sgen = 'W/--';
         } else {
@@ -469,7 +465,7 @@ document.getElementById("checkEasyBtn").addEventListener("click", () => {
             if (fur === 'Red/Orange' || fur === 'Cream') {
                 expertVals.redGen = sex === 'M' ? 'XO/Y' : 'XO/XO';
                 if (fur === 'Cream') expertVals.Dgen = 'd/d';
-            } else if (pattern !== 'Tortoiseshell') { // Don't override eumelanin if tortie
+            } else if (pattern !== 'Tortoiseshell') {
                 const colorMap = {
                     'Black': { Bgen: 'B/B', Dgen: 'D/D' }, 'Blue/Gray': { Bgen: 'B/B', Dgen: 'd/d' },
                     'Chocolate': { Bgen: 'b/b', Dgen: 'D/D' }, 'Lilac': { Bgen: 'b/b', Dgen: 'd/d' },
@@ -478,7 +474,6 @@ document.getElementById("checkEasyBtn").addEventListener("click", () => {
                 if (colorMap[fur]) Object.assign(expertVals, colorMap[fur]);
             }
 
-            // Force Agouti (tabby visible) for red cats and tabby-type patterns
             if (['Tabby', 'Spotted', 'Ticked'].includes(pattern) || fur === 'Red/Orange' || fur === 'Cream') {
                 expertVals.Agen = 'A/A';
                 if (pattern === 'Spotted') expertVals.patternGen = 'Sp/Sp';
@@ -486,7 +481,6 @@ document.getElementById("checkEasyBtn").addEventListener("click", () => {
             }
         }
         
-        // 3. Update the Expert Panel dropdowns with the mapped values
         document.getElementById('sex').value = sex;
         document.getElementById('expertEye').value = eye;
         for (const key in expertVals) {
@@ -495,9 +489,8 @@ document.getElementById("checkEasyBtn").addEventListener("click", () => {
             }
         }
         
-        // 4. Trigger the expert button's click event to run its own check and draw the cat
         document.getElementById('checkBtn').click();
-    }, 10); // A tiny delay is enough to push this to the end of the execution queue
+    }, 10);
 });
 
 

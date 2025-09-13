@@ -91,13 +91,12 @@ document.addEventListener('DOMContentLoaded', () => {
             layers.push({ src: 'overlay_sepia.png' });
         }
         
-        // ** D. Wideband (Golden) Overlay Layer **
-        // MODIFIED: This check no longer excludes silver cats.
+        // ** D. Sunshine (Corin) Overlay Layer **
         if (inputs.Wbgen === 'wb/wb' && isAgouti && !hasColorHidden) {
-            layers.push({ src: 'overlay_golden.png' });
+            layers.push({ src: 'overlay_sunshine.png' });
         }
         
-        // ** E. Tabby Pattern Layer (runs AFTER golden) **
+        // ** E. Tabby Pattern Layer (runs AFTER sunshine) **
         if ((isAgouti || isRed) && !isTortie && !hasColorHidden) {
             let patternPrefix = isSilver ? 'pattern_silver_' : 'pattern_';
             let tabbyLayer = { src: '', opacity: 1.0 };
